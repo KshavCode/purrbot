@@ -125,18 +125,16 @@ def userindex(userid:int) :
 async def change_status():
   await client.change_presence(activity=discord.Game(next(status)))
 
-r = requests.head(url="https://discord.command/api/v1")
-try:
-  print(f"Rate limit {int(r.headers['Retry-After']) / 60} minutes left")
-except:
-  print("No rate limit")
+# r = requests.head(url="https://discord.command/api/v1")
+# try:
+#   print(f"Rate limit {int(r.headers['Retry-After']) / 60} minutes left")
+# except:
+#   print("No rate limit")
 
 intents = discord.Intents.default()
 intents.members = True
 
-client = commands.Bot(command_prefix=['purr ', 'Purr ', 'PURR '],
-                      intents=intents,
-                      case_insensitive=True)
+client = commands.Bot(command_prefix=['purr ', 'Purr ', 'PURR '], intents=intents, case_insensitive=True)
 client.remove_command('help')
 
 
@@ -182,199 +180,7 @@ def registered(userid, filename) :
 
 
 
-
-
-#-------------------------------HELP DICTIONARY----------------------------------
-
-
-help_args = {
-  "toss": "side --> To tell whether you want heads or tails.",
-  "rate":
-  "member --> Mention the member to perform action on\narg --> the quality on which you want to rate the member.",
-  "invite": "No arguments to fulfill.",
-  "slap" : "member --> Mention the member to perform action on", 
-  "pat" : "member --> Mention the member to perform action on",
-  "pfp" : "`optional` member --> Mention the member to perform action on",
-  "factorial" : "num --> Number on which the command should be performed",
-  "echo" : "msg --> Any sentence of word",
-  "spamstart" : "message --> Any sentence or word\n`optional`amount --> Integer, for repition. 50, if not entered.",
-  "info" : "No arguments to fulfill.",
-  "randomnum" : "startnum --> Any positive number to start range with\nendnum --> Any positive number to end the range",
-  "diceroll" : "No arguments to fulfill.",
-  "pick1" : "option1 --> Choice 1 to choose from\noption2 --> Choice 2 to choose from.",
-  "8ball" : "question --> Type the question you want to get answer for.",
-  "logs" : "No arguments to fulfill.",
-  "exponent" : "num --> Number on which the command should be performed\npower --> integer, at which the number will be raised.",
-  "fact" : "No arguments to fulfill.",
-  "add" : "num1 --> Number 1 to perform action\nnum2 --> Number 2 to perform action\n`optional` num3 --> Number 3 to perform action\n`optional` num4 --> Number 4 to perform action\n`optional` num5 --> Number 5 to perform action\n`optional` num6 --> Number 6 to perform action\n`optional` num7 --> Number 7 to perform action\n`optional` num8 --> Number 8 to perform action\n",
-  "multiply" : "num1 --> Number 1 to perform action\nnum2 --> Number 2 to perform action\n`optional` num3 --> Number 3 to perform action\n`optional` num4 --> Number 4 to perform action\n`optional` num5 --> Number 5 to perform action\n`optional` num6 --> Number 6 to perform action\n`optional` num7 --> Number 7 to perform action\n`optional` num8 --> Number 8 to perform action",
-  "subtract" : "num1 --> Number 1 to perform action\nnum2 --> Number 2 to perform action\n`optional` num3 --> Number 3 to perform action\n`optional` num4 --> Number 4 to perform action\n`optional` num5 --> Number 5 to perform action\n`optional` num6 --> Number 6 to perform action\n`optional` num7 --> Number 7 to perform action\n`optional` num8 --> Number 8 to perform action",
-  "divide" : "numerator --> Number which will act as dividend\ndenominator --> Number which will act as divisor",
-  "pet" : "pets --> Animal to be chosen from the given options.",
-  "riddle" : "No arguments to fulfill.",
-  "encode" : "text --> Any sentence/word",
-  "decode" : "code --> symbols that are used to encode",
-  "feedback" : "No arguments to fulfill.",
-  "purge" : "`optional` number --> Any natural number. 5 is default",
-  "kick" : "member --> Mention the member to perform action on\n`optional`reason --> the main reason due to which the action has been taken",
-  "kaboom" : "channel --> Mention the channel on which the action has to be performed",
-  "hiddendm" : "member --> Mention the member to perform action on\nmessage --> Any sentence or word",
-  "shape" : "shape --> Select the 2D/3D shape from the options to perform action\nvalue --> Enter the numbers to use for the action or with spaces if entering more values",
-  "sqroot" : "num --> Number on which the command should be performed on",
-  "log10" : "num --> Number on which the command should be performed on",
-  "userinfo" : "`optional`member --> Mention the member to perform action on",
-  "serverinfo" : "No arguments to fulfill.",
-  "wish" : "member --> Mention the member to perform action on\n`optional`reason --> the main reason due to which the action has been taken",
-  "remindme" : "message --> Any sentence or word\ntime --> Time in minutes (m) or seconds (s) placed at the end. For example : 4s, 23m, 2m, 90s, etc.",
-  "poll" : "content --> Any sentence defining the purpose of something\nemojis --> Enter emojis that you want Purrbot to add as reaction\n`optional` header --> Heading\n`footer` --> Footer (text at the bottom)",
-  "profile" : "member --> Mention the member to perform action on",
-  "edit" : "val --> Add a new value to the existing value",
-  "leaderboard" : "basis --> Enter the basis to get the leaderboard",
-  "search" : "No arguments to fulfill.",
-  "steal" : "No arguments to fulfill.",
-  "research" : "leveltype --> Enter to whether upgrade fish or daily level",
-  "shop" : "No arguments to fulfill.",
-  "buy" : "itemid --> ID of the item\n`optional` quantity --> Quantity of the item to buy",
-  "inventory" : "No arguments to fulfill.",
-  "share" : "member --> Mention the member to perform action on\namount --> Amount of purrcoins to be shared",
-  "gamble" : "amount --> Amount of purrcoins to gamble",
-  "fish" : "No arguments to fulfill.",
-  "bucket" : "No arguments to fulfill.",
-  "sellfish" : "tier --> Enter the tier of fish to sell or to sell all",
-  "fishinfo" : "tier --> Enter the tier of fish to sell or to sell all",
-  "item" : "item --> ID of the item",
-  "balance" : "No arguments to fulfill.",
-  "counter" : "val --> Enter the roleplay command to be counted"
-}
-
-#________________________________________________________________________________
-
 #_______________________________LIST/DICTIONARY__________________________________
-
-hug_kdrama = ["https://0.soompi.io/wp-content/uploads/2021/01/31075443/park-bo-young-park-hyung-sik-strong-woman-do-bong-soon2.gif", "https://media.tenor.command/7M4nIDsCmHIAAAAC/kdrama-hug.gif", "https://i.pinimg.command/originals/39/cf/35/39cf35d4a2fd347baf9a353908f32ea1.gif", "https://media.tenor.command/4sxxFiTMItgAAAAd/hug-cuddle.gif", "https://0.soompi.io/wp-content/uploads/2021/01/31084225/han-hyo-joo-lee-jong-suk-w3.gif", "https://64.media.tumblr.command/40ef99dfd56f6893bb7aa18c130b546d/tumblr_ou792yP2OB1tmjt2ko10_400.gif", "https://media.tenor.command/Hyax0hXopTYAAAAd/run-on-run-on-kdrama.gif", "https://img.buzzfeed.command/buzzfeed-static/static/2021-12/28/18/asset/115826acea96/anigif_sub-buzz-8300-1640715731-7.gif", "https://media.tenor.command/CVfsx3oi5C8AAAAC/ji-chang-wook-jcw.gif", "https://24.media.tumblr.command/c4ea73f3ebff800107f1c8614c12850e/tumblr_myf8hurUjO1sgbtl8o1_500.gif", "https://pa1.narvii.command/7520/b326fbb4b3c152e3e8382113088efdb6cc0077b1r1-480-270_hq.gif", "https://i.pinimg.command/originals/a8/74/2a/a8742afb38b6c62a46d0a56f2c872bc0.gif", "https://thumbs.gfycat.command/EducatedCleanDoe-size_restricted.gif", "https://unbotheredunnies.files.wordpress.command/2021/02/d01facd548ad875202c66840ce8257cf99a7d840.gif","https://68.media.tumblr.command/ec7432d878e42465b27b50374fc5b19d/tumblr_oji29c3seU1rzk6m3o1_r2_500.gif", "https://img.buzzfeed.command/buzzfeed-static/static/2020-11/4/1/asset/7614a2480210/anigif_sub-buzz-2252-1604452794-16.gif", "https://unbotheredunnies.files.wordpress.command/2021/05/original.gif", "https://i.imgur.command/Oj92IL3.gif", "https://gifdb.command/images/file/romantic-hug-lee-min-ho-kim-go-eun-king-eternal-monarch-7fuwx7muzjoz9182.gif", "https://64.media.tumblr.command/a9c3e5cc2d95296e4d1e8f85af1dbeed/tumblr_ojtt894ukl1w1vx4ko4_r1_250.gif", "https://media.tenor.command/tIkCctOxj6YAAAAM/nam-joo-hyuk-joohyuk.gif", "https://i.pinimg.command/originals/b9/0e/55/b90e55ed98a56dfe782a9d5fe84ca18b.gif", "https://favim.command/pd/s14/orig/170130/couple-cute-gif-kdrama-Favim.command-5028624.gif", "https://i.pinimg.command/originals/41/ae/6a/41ae6a2c3459ab609630719d61e52afa.gif", "https://64.media.tumblr.command/607769b5580bbf572ae7d2ba2612fc72/tumblr_p6odlhgCaX1wsuo8ro3_500.gif", "https://78.media.tumblr.command/5176f1f2952e4068a47802cd43d93e95/tumblr_pb3zkr0qsn1t8gzeto5_400.gif", "https://media.tenor.command/70Ep-IFhbUgAAAAC/goblin-kdrama.gif", "https://image.kpopmap.command/2020/08/its-okay-to-not-be-okay-kim-soohyun-seo-yeji-final-cover.gif","https://images6.fanpop.command/image/photos/43800000/iKON-ikon-43842638-277-400.gif", "https://i.gifer.command/GrR9.gif", "https://media.tenor.command/GbQFj4bbTwYAAAAC/yoona-kdrama.gif", "https://64.media.tumblr.command/1875bbe406584eef8c8f5e74a4ced4de/e81942059f27fee3-0f/s540x810/1cee6c92b4750889eba018565ba726e5522db8ae.gif", "https://pa1.narvii.command/6194/632ff7f1a6906ac3825ff39da6526e311757c9e7_hq.gif", "https://media.giphy.command/media/xUOwFSnqUijKCWkWbK/giphy.gif", "https://media.tenor.command/bSaBvnDj_uQAAAAC/jung-hae-in-kdrama.gif", "https://pa1.narvii.command/6346/36369bd42454387cdccacc4cc646548f99a61d10_hq.gif", "https://64.media.tumblr.command/e68c7600ad0a3029df9bdcf27b79195c/tumblr_ou792yP2OB1tmjt2ko6_400.gif"]
-
-
-kiss_kdrama = ["https://media.tenor.command/KRG0qaxHm64AAAAC/kdrama-kiss.gif", "https://i.pinimg.command/originals/13/f8/3a/13f83a3ba6e2c06987e929dac3585647.gif", "https://media.tenor.command/QgO2f9tV-JUAAAAC/ji-changwook-nam-jihyun.gif", "https://media.tenor.command/GWqjWnt7hr0AAAAC/kdrama-kiss.gif", "https://media.tenor.command/J6eCRjI3HXMAAAAC/nam-joo-hyuk-joohyuk.gif", "https://media.tenor.command/tFAgy_JmttMAAAAM/kdrama-extraordinary-attorney-woo.gif", "https://media.tenor.command/H1kgKmJKwwQAAAAC/kiss-love.gif", "https://media.tenor.command/rG0C_6IJAE0AAAAC/kimsohyun-kiss.gif", "https://i.pinimg.command/originals/5c/0f/3f/5c0f3f72a40ecab28d92bb6042a1440d.gif", "https://media.tenor.command/UaqiTT4wxkAAAAAd/startup-korean-drama.gif", "https://media.tenor.command/QepV72O79uoAAAAd/startup-korean-drama.gif", "https://media.tenor.command/oK8QVSPfPdUAAAAd/startup-korean-drama.gif", "https://gifdb.command/images/high/kdrama-2521-taeri-joohyuk-kiss-tf2z9s8m6lu3o7tb.gif", "https://media.tenor.command/u3k8NpFEYIsAAAAC/kdrama-korean.gif", "https://media.tenor.command/pmVk3X3ujLwAAAAC/kiss-kdrama.gif", "https://media.tenor.command/4wEWCsuIKeEAAAAM/nam-joo-hyuk-joohyuk.gif", "https://media.tenor.command/MgWoNYLPiAYAAAAC/kiss-kdrama.gif", "https://4.bp.blogspot.command/-bMkikfVzFwg/VuMEFu3TM2I/AAAAAAACy4c/TW6q9L4IkKwb_WOHgNy-cTJk4G4u3e1hw/s1600/16.3.gif", "https://media.tenor.command/4tXrUXD0KOsAAAAC/sweet-kiss.gif", "https://media.tenor.command/sLjSAmG5o70AAAAd/kiss-sweet.gif", "https://media.tenor.command/TLJL7DTgTWcAAAAd/pinocchio-park-shin-hye.gif", "https://gifdb.command/images/high/sweet-love-couple-kiss-vietnamese-drama-cv7hnpbadxs0ueo9.gif", "https://0.soompi.io/wp-content/uploads/2021/10/13183141/strong-woman-do-bong-soon.gif", "https://media.tenor.command/NbhC3v1KUA4AAAAC/joy-kiss-cheek-kiss.gif", "https://68.media.tumblr.command/b31985a20634726e7cd066670d619dee/tumblr_obp6nq64wa1rqg3fvo4_500.gif", "https://media.tenor.command/nC_LTE0D1_4AAAAM/extraordinary-attorney-woo-kang-tae-oh.gif", "https://media.giphy.command/media/kfcOmuaDqHYCiaeREV/giphy.gif", "https://subtitledreams.files.wordpress.command/2017/02/queeninhyunsman_kiss1.gif", "https://i.pinimg.command/originals/4b/fc/75/4bfc752039005c1beb1b5881126577d8.gif", "https://i.makeagif.command/media/12-11-2018/S3XJDE.gif", "https://thumbs.gfycat.command/DazzlingKaleidoscopicBoutu-max-1mb.gif", "https://i.makeagif.command/media/11-01-2015/zur9pZ.gif", "https://3.bp.blogspot.command/-qA3-ne_ja8A/UcykX5MCFwI/AAAAAAAAMGs/mPXfvmuNI6w/s624/2013-06-27+22_03_03.gif", "https://0.soompi.io/wp-content/uploads/2021/10/13182005/secretary-kim.gif", "https://favim.command/pd/p/orig/2018/11/13/korean-drama-kdrama-gif-Favim.command-6557747.gif", "https://gifdb.command/images/high/fight-for-my-way-couple-hot-kiss-hufa2402kiktvnve.gif", "https://0.soompi.io/wp-content/uploads/2021/10/14143550/something-in-the-rain1.gif",            "https://i.pinimg.command/originals/c3/81/67/c38167daab7310dbba33b5019c535b3f.gif", "https://i.pinimg.command/originals/e4/c3/bc/e4c3bc07c1f2bec0b274d7c77483160e.gif", "https://media.tenor.command/3yoEGJlxbscAAAAM/kiss-couple.gif", "https://4.bp.blogspot.command/-13hznpo1MF0/U4dos6KY5LI/AAAAAAAACZE/t-csSKbOhWg/s1600/My+Love+From+Another+Star+Kiss.gif", "https://media.tenor.command/LJfmQeId0QUAAAAC/love-kdrama.gif", "https://0.soompi.io/wp-content/uploads/2021/10/14065626/i-am-not-a-robot.gif", "https://subtitledreams.files.wordpress.command/2017/02/queeninhyunsman_kiss1.gif", "https://i.makeagif.command/media/11-01-2015/zur9pZ.gif", "https://66.media.tumblr.command/a84432f8535eba1bddc5f2df5dcc047b/tumblr_inline_o83ttqa95y1u511vp_400.gif", "https://4.bp.blogspot.command/-MVamcqusHvo/Ut2gxFuQTXI/AAAAAAAAV5U/KD063tpBZQM/s1600/2014-01-20+23_13_17.gif"]
-
-dogs = [
-  "https://www.rd.command/wp-content/uploads/2019/01/shutterstock_673465372.jpg?fit=700,467",
-  "https://i.pinimg.command/736x/ef/59/0d/ef590d3e2990e6827d96ad8ce55a755b.jpg",
-  "https://cf.ltkcdn.net/dogs/images/std/236742-800x515r1-cutest-puppy-videos.jpg",
-  "https://i.pinimg.command/originals/be/82/15/be821544fc5f328567cb538f96edb49a.jpg",
-"https://images.hindustantimes.command/rf/image_size_960x540/HT/p2/2018/05/16/Pictures/_1571873a-58de-11e8-b431-73159b4b09e2.jpg",
-  "https://a-z-animals.command/media/2021/12/Prettiest-_-Cutest-Dogs-header.jpg",
-  "https://www.hiptoro.command/wp-content/uploads/2020/09/1-102.jpg",
-  "https://bestwishes.vip/wp-content/uploads/2020/12/3.jpeg",
-  "https://i.pinimg.command/originals/ef/59/0d/ef590d3e2990e6827d96ad8ce55a755b.png",
-  "https://hips.hearstapps.command/ghk.h-cdn.co/assets/17/40/pom.jpg",
-"https://www.thesprucepets.command/thmb/et0R6AiQHOqP9s4WGHcfKBDPjVo=/2667x2000/smart/filters:no_upscale()/cute-teacup-dog-breeds-4587847-hero-4e1112e93c68438eb0e22f505f739b74.jpg",
-"https://ichef.bbci.co.uk/news/976/cpsprodpb/EB24/production/_112669106_66030514-b1c2-4533-9230-272b8368e25f.jpg",
-  "https://www.sheknows.command/wp-content/uploads/2018/08/fajkx3pdvvt9ax6btssg.jpeg?w=1255", "https://rukminim1.flixcart.command/image/416/416/jri3jww0/poster/r/g/m/large-cute-dogs-group-puppy7-original-imafd8ywygjbejza.jpeg?q=70",
-  "https://www.petsworld.in/blog/wp-content/uploads/2015/10/b05967dfb43f08adfdb30f2f6a4c665d.jpg",
-  "https://wallpaperaccess.command/full/1076378.jpg",
-  "https://www.hiptoro.command/wp-content/uploads/2020/09/1-102.jpg",
-  "https://i.pinimg.command/736x/ef/1d/c3/ef1dc3b0c5c1cbd7d7d0a27cdcb06e3b.jpg",
-  "https://imagesvc.meredithcorp.io/v3/mm/image?q=60&c=sc&rect=456%2C155%2C1558%2C1258&poi=face&w=2000&h=2000&url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F47%2F2020%2F06%2F26%2Fwhite-maletese-puppy-walking-641791436-2000.jpg",
-"https://thumbor.bigedition.command/pomeranian/La3jJyKkEx14rv44zDZoytW12eI=/800x0/filters:quality(80)/granite-web-prod/d2/4d/d24d6d51ac7a489b8515f076fa47750a.jpeg",
-"https://www.scotsman.command/webimg/b25lY21zOjRkMzljMWVkLThkMjAtNDFkZi1hN2Q2LTY3NjM2NzEwNjMxMDpjOWEyMDU0NC05NjA1LTQwMDctYjNjNi04YmY4Y2IyMGY3MDc=.jpg?width=640&quality=65&smart&enable=upscale",
-  "https://i.pinimg.command/originals/98/e8/94/98e894e43d26e3393f17f030505da425.jpg",
-  "https://i.pinimg.command/originals/80/d3/64/80d364e09d31fcba8af274926d4332ff.jpg",
-  "https://s9.favim.command/orig/140101/boo-cute-doggies-dogs-Favim.command-1212748.jpg",
-  "https://i.pinimg.command/originals/50/35/fc/5035fc30e323ff0b1a29b290b05f9af6.jpg",
-  "https://i.pinimg.command/236x/e2/42/1e/e2421ea92c654c3e88aa220b69cbd9e3--so-cute-puppy-love.jpg",
-  "https://i.ytimg.command/vi/glrQiz923nc/hqdefault.jpg",
-  "https://dogexpress.in/wp-content/uploads/2017/05/Tiny.jpg",
-  "https://www.boredpanda.command/blog/wp-content/uploads/2022/04/puppy-photos-omica-photography-coverimage.jpg",
-"https://pbs.twimg.command/profile_images/378800000636206082/9394577cf435fa7b8a3de789b4035226_400x400.jpeg",
-  "https://wallpaperaccess.command/full/390975.jpg",
-  "https://assets.iflscience.command/assets/articleNo/32549/aImg/8946/1464370531-4239-why-adorable-puppies-can-make-you-feel-violent-l.jpg",
-  "https://i.pinimg.command/736x/fc/91/1a/fc911a8d2740ae1714d9d2e978b6f5f4.jpg",
-  "https://www.eventstodayz.command/wp-content/uploads/2016/12/cute-dog-wallpaper.jpg",
-  "https://i.imgur.command/QiuzY7W.jpg",
-  "https://i.pinimg.command/originals/55/68/60/55686080f066e8898ab848389bfd6ad0.jpg",
-  "https://i.pinimg.command/originals/8e/8c/1f/8e8c1f365007539d47de6e58142be41f.jpg",
-  "https://i.pinimg.command/originals/cf/a9/82/cfa982e7487e2cab46845ef208438148.jpg",
-  "https://i.pinimg.command/originals/46/04/35/4604356e5b27d38ba5ad9e1cb6b2345c.jpg",
-  "https://i.pinimg.command/736x/56/03/4f/56034f1837b57f66fe6fd4004cba3c99.jpg",
-  "https://www.thesprucepets.command/thmb/oncdQ_5UJh-JhEiWiDge9AdiT94=/1080x1350/filters:no_upscale():max_bytes(150000):strip_icc()/51985952_1279464795537148_4833125964911932806_n-5c73f09b46e0fb000107631b.jpg",
-  "https://i.pinimg.command/474x/74/53/25/7453256386ad622a42e33571885505d8--cute-teacup-puppies-teacup-maltese-puppies.jpg",
-  "https://i.pinimg.command/474x/c4/13/90/c413907510cc710e2abee348a403a51e--teacup-maltese-puppies-maltese-dogs.jpg",
-  "https://i.pinimg.command/originals/ca/4a/4c/ca4a4c40cb430fc585fb0895f4f7caed.jpg",
-  "https://live.staticflickr.command/8481/8187694388_fe4a41e397_c.jpg",
-  "https://i.pinimg.command/736x/6c/6d/45/6c6d45b433f5961e48b7dd0a0f1e3f4f--teacup-maltese-teacup-puppies.jpg",
-  "https://barkingroyalty.command/wp-content/uploads/2015/12/pomeraninan-puppy.jpg",
-  "https://i.ytimg.command/vi/akyDq4dA3Hg/hqdefault.jpg",
-  "https://static.inspiremore.command/wp-content/uploads/2016/10/19121005/VS7.jpg",
-  "https://i.pinimg.command/originals/d9/ac/03/d9ac0315119ee05471d4a87eb496dc34.jpg"
-]
-cats = [
-  "https://d1hjkbq40fs2x4.cloudfront.net/2016-07-16/files/cat-sample_1313.jpg",
-  "https://hips.hearstapps.command/hmg-prod.s3.amazonaws.command/images/cute-photos-of-cats-cuddling-1593203046.jpg",
-  "https://iheartcats.command/wp-content/uploads/2020/07/cat-mom-kitten-cute.jpg",
-  "https://cdn.wallpapersafari.command/17/26/HXv6nC.jpg",
-  "https://iheartcats.command/wp-content/uploads/2020/08/madfluffs_103546217_688328451965891_7808474257930839654_n-e1596310221302.jpg",
-  "https://www.teahub.io/photos/full/216-2168687_cat-photo-cat-pictures-high-quality.jpg",
-  "https://i.pinimg.command/236x/7e/0a/50/7e0a507de8cf8b46e0f2665f1058ef37.jpg",
-  "https://wallpaper.dog/large/10802305.jpg",
-  "https://cdn.quotesgram.command/img/88/59/86321725-very-cute-cat-hd-wallpapers-beautiful-house-usa-wallpapersvery-stuff-puppy-quotes-puppies-kittens-things.jpg",
-  "https://www.pngitem.command/pimgs/m/343-3433369_cute-cat-animation-png-transparent-png.png",
-  "https://www.pngitem.command/pimgs/m/220-2204702_gatito-kawaii-png-cute-cat-cartoon-funny-transparent.png",
-  "https://c.tenor.command/9y5iGiCiGRQAAAAC/pusheen-tea.gif",
-  "http://pm1.narvii.command/6525/28af3dc98268edd47d8e4608c5caa721a94a6b04_00.jpg",
-  "https://wallpapers-clan.command/wp-content/uploads/2022/06/cute-pusheen-pfp-21.jpg",
-  "https://i.pinimg.command/originals/48/b9/38/48b938baf7e9dc96eee009efecfff21e.jpg",
-  "https://pm1.narvii.command/7606/a603c6dc6e700197bd622d92f0d1a269d2984c93r1-640-640v2_00.jpg",
-  "https://media1.giphy.command/media/OmK8lulOMQ9XO/giphy.gif",
-  "https://cdn.shopify.command/s/files/1/1369/6411/files/cutest-cat-gifs-kitten-meow_large.gif?v=1504275637",
-  "https://c.tenor.command/8rRT6XN0ztEAAAAd/kitty-cat.gif",
-  "https://media3.giphy.command/media/DjYqNVITTewEM/giphy.gif",
-  "https://bestanimations.command/media/cats/1352541851funny-cat-gif-2.gif",
-  "https://data.whicdn.command/images/291013693/original.gif",
-  "https://www.pbh2.command/wordpress/wp-content/uploads/2013/05/cutest-cat-gifs-bowl-kitten.gif",
-  "https://64.media.tumblr.command/b0b41b61022ee24f9fad6dae79045190/4100834cd496877d-30/s500x750/c9d268f91280b17941b03a8c5dee0d3e6d2b3958.gifv",
-  "https://www.icegif.command/wp-content/uploads/pusheen-icegif-1.gif",
-  "https://i.ibb.co/7vGLS2G/Cute-Cat-GIF-Adorable-white-Scottish-fold-kitty-trying-to-catch-his-toy-but-he-can-t-cat-gifs-command.gif",
-  "https://www.pbh2.command/wordpress/wp-content/uploads/2013/05/cutest-cat-gifs-scratch.gif",
-  "https://i.ibb.co/BBgMtY9/Cute-Kitten-GIF-Super-cute-kitty-meowing-in-her-comfy-box-She-needs-her-mom-or-she-s-hungry-cat-gifs.gif",
-  "https://encrypted-tbn0.gstatic.command/images?q=tbn:ANd9GcQYXtz_AUZwrN3j366MYpz4-bnh_sl_sgykoQ&usqp=CAU",
-  "https://i.pinimg.command/originals/bc/f4/d1/bcf4d183aefc4cb5a559dafc0c3c7435.gif",
-  "https://c.tenor.command/mvfRtjepEVEAAAAC/nyancat-pootisman.gif",
-  "https://i.gifer.command/4Jc.gif",
-  "https://w7.pngwing.command/pngs/329/490/png-transparent-nyan-cat-youtube-sticker-pixel-animals-text-rectangle.png",
-  "https://media4.giphy.command/media/gx54W1mSpeYMg/giphy_s.gif"
-]
-pandas = [
-"https://media1.giphy.command/media/ewzF6uunnPn6L5amuW/200w.gif?cid=6c09b9521k9td7njdvuymcnzrwwm08qsedj400g6tkwp46uo&rid=200w.gif&ct=g",
-"https://media.tenor.command/CoQL2lJ_3SwAAAAM/panda.gif",
-"https://bestanimations.command/media/panda/1328820576baby-panda-funny-cute-gif.gif",
-"https://i.pinimg.command/originals/ce/d4/d9/ced4d9f94106ac92584305410bc72427.gif",
-"https://i.pinimg.command/originals/00/34/0e/00340e4ed1007334d4db5f61453b3586.gif",
-"https://i.gifer.command/3X6v.gif",
-"https://24.media.tumblr.command/dc33a2dfc97782cac4edb0eceb3c0843/tumblr_mt1ykeSeSu1shzgrdo1_400.gif",
-"https://64.media.tumblr.command/854da9326e03fcc1edff8873b6f562c6/1b26d6c59a6aa576-40/s400x600/66c62895d2cf7b48be805aa177a42440089c2d62.gif",
-"https://i.pinimg.command/originals/d7/83/22/d78322dee7ad770df4773f150510c9b1.gif",
-"https://media.tenor.command/I2x449Tko0cAAAAM/panda-door.gif",
-"http://31.media.tumblr.command/58e5484cb235b02310d28d8deb2f8335/tumblr_mssamnJkld1riml7wo1_400.gif",
-"https://giffiles.alphacoders.command/879/87909.gif",
-"https://i.gifer.command/Kxbe.gif",
-"https://media.tenor.command/H1mTFQ6-a1wAAAAC/panda.gif",
-"https://64.media.tumblr.command/f654b8e20f1e48a89ba67d5991bced36/7b0d9b291522ebb2-08/s500x750/b634d79abd16f82316b333b3a5d82b5418358f96.gif",
-"https://media.tenor.command/3OMzo-QSVqEAAAAM/baby-hug.gif",
-"https://media.tenor.command/ti_Qr2TVWLAAAAAC/panda-cute.gif",
-"https://media.tenor.command/hPHY8AbjC_0AAAAM/funny-animals-dogs.gif",
-"http://25.media.tumblr.command/55af4f662ba70454e748797aed040784/tumblr_mkdoyyeYeC1s7itpyo1_500.gif",
-"https://media.tenor.command/_Eci4l5V2M0AAAAM/%E6%8A%B1%E6%8A%B1-%E5%91%B5%E6%8A%A4.gif",
-"https://media.tenor.command/QcRz7lyD99gAAAAC/panda-cute.gif",
-"https://media.tenor.command/ezdIp0GQkDAAAAAM/baby-pandas-panda.gif",
-"https://i.gifer.command/WyZw.gif",
-"https://media.tenor.command/lynvyeM4fOIAAAAM/h%C3%B3ng-cute.gif",
-"https://thumbs.gfycat.command/CrazyFatAzurewingedmagpie-size_restricted.gif",
-"https://media2.giphy.command/media/xT8qB1QeVVwk2NmF0Y/giphy.gif",
-"http://24.media.tumblr.command/f591706368af324d2d77137d77e2cb08/tumblr_n3b2gbOXJf1s9ab4to1_400.gif"
-]
-hamster = ["https://image.winudf.command/v2/image/Y29tLmFuZHJvbW8uZGV2NTUzMjk5LmFwcDU0NjY1OV9zY3JlZW5zaG90c18xX2Y2ZWMyYWJj/screen-0.jpg?fakeurl=1&type=.jpg", "https://t4.ftcdn.net/jpg/05/61/40/53/360_F_561405378_tFqUXOUhDc13eBYtHpV5qChCWu0EN6eR.jpg", "https://i.ytimg.command/vi/MQqcSymu8HA/maxresdefault.jpg", "https://w0.peakpx.command/wallpaper/330/13/HD-wallpaper-cute-hamster-in-meadow-with-daisies-field-young-wild-grass.jpg", "https://images.saymedia-content.command/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cq_auto:eco%2Cw_1200/MTk2OTU0OTI4Mzk5MjYzNDkz/reasons-not-to-have-a-pet-hamster.png", "https://cf.ltkcdn.net/small-mammals/small-mammal-names/images/orig/323197-1600x912-hamster-flowers.jpg", "https://images.hindustantimes.command/img/2022/03/09/1600x900/Cute_hamster_first_time_eating_spaghetti_might_make_you_crave_for_some_Watch_1646830772153_1646830807999.png", "https://d1muy2ct2wkbaz.cloudfront.net/video/465000/464811/580x325/0.jpg", "https://www.eastcoastdaily.in/wp-content/uploads/2020/09/everyone-likes-chips.jpg", "https://i.pinimg.command/474x/2c/1d/de/2c1dde6528b9c8631b677d61505ffbb7.jpg", "https://i.pinimg.command/236x/56/22/7b/56227b85727d7305a7bcebb4379c801b.jpg", "https://i.pinimg.command/236x/25/7c/8b/257c8b61dd7c709b2abeae0a70676cd5--cute-kawaii-drawings-cute-cartoon-drawings.jpg", "https://68.media.tumblr.command/c15d0ea21e9de79e24b239f892002c20/tumblr_oo5i9hDHP01rluhlpo1_400.gif", "https://images.squarespace-cdn.command/content/v1/5883ba0ee4fcb5d74e068902/1638552840118-WSMAG6RD8E9EHK55HVYE/Jude-Halloween-2021-013-small.jpg", "https://www.thesprucepets.command/thmb/zXziTJx98ZGKMgmwX4ijBNOCQlY=/1732x0/filters:no_upscale():strip_icc()/GettyImages-497336201-853468639f5c4a43ab54222f15d92b77.jpg", "https://wallpapers.command/images/hd/cute-drawing-pictures-qh0hdd7593g4sycj.jpg", "https://ih1.redbubble.net/image.4736607326.4847/mwo,x1000,ipad_2_skin-pad,1000x1000,f8f8f8.u2.jpg", "https://static.vecteezy.command/system/resources/previews/017/048/296/original/cute-hamster-illustration-hamster-kawaii-chibi-drawing-style-hamster-cartoon-vector.jpg", "https://www.inspiremore.command/wp-content/uploads/2022/05/hamster-cheese.jpeg", "https://images1.fanpop.command/images/photos/2600000/Cute-Baby-hamsters-2628881-460-345.jpg", "https://thumbs.dreamstime.command/b/cute-hamster-springtime-cartoon-character-funny-animal-265969510.jpg", "https://supremepetfoods.command/wp-content/uploads/2015/08/iStock-1072781282-1200px-510x305.jpg", "https://w0.peakpx.command/wallpaper/449/861/HD-wallpaper-hamster-animal-cute-hamster-hello-themes.jpg", "https://cdn.pixabay.command/photo/2023/03/11/22/08/ai-generated-7845365_960_720.jpg", "https://www.pngkit.command/png/detail/65-656483_image-black-and-white-hamster-animals-cute-kawaii.png", "https://t4.ftcdn.net/jpg/05/78/23/67/360_F_578236729_1Y0KL1rIgFulbmvapsBUiyAukc9Bod6M.jpg", "https://wallpapers.command/images/hd/cute-hamster-pictures-qoklyec3lhkocsoo.jpg", "https://images-cdn.ubuy.co.in/63f8336fab3ea80d5604fa67-hamster-cute-hamster-white-wall.jpg"]
-
-rabbit = ["https://t3.ftcdn.net/jpg/05/70/60/74/360_F_570607483_xwyvxx2liLMmjwTDKULTh7LTsOmv6Umt.jpg", "https://m.media-amazon.command/images/I/41fO4oChXSL._AC_UF894,1000_QL80_.jpg", "https://c4.wallpaperflare.command/wallpaper/204/370/353/bunny-wallpaper-preview.jpg", "https://www.animallama.command/wp-content/uploads/2023/03/how-smart-are-rabbits-768x512.jpg", "https://cdn.wallpapersafari.command/16/76/eUij9X.jpg", "https://t4.ftcdn.net/jpg/05/60/46/57/360_F_560465710_VpBpJLv0yCT2GmDH8AFlJwoddYWtTeDG.jpg", "https://t3.ftcdn.net/jpg/05/61/31/20/360_F_561312086_cvzegHUnmNN0ZLPZBVDb3BDuFKHJ1iXN.jpg", "https://i2-prod.leicestermercury.co.uk/news/leicester-news/article7306132.ece/ALTERNATES/s1200b/0_gettyimages-1214873071-170667a.jpg", "https://i.ytimg.command/vi/8BYa0U1h5Fs/hqdefault.jpg", "https://t4.ftcdn.net/jpg/05/58/60/47/360_F_558604762_6Q02BIpSwrpBIGgwCYdssBzVtCsXL3vV.jpg", "https://www.peta.org/wp-content/uploads/2021/04/rabbit-blue-background.jpg", "https://media.tenor.command/q_jj1u340XAAAAAM/snowball-bunny-carrot.gif", "https://i.ytimg.command/vi/FC4Kun_BimM/maxresdefault.jpg", "https://e1.pxfuel.command/desktop-wallpaper/204/576/desktop-wallpaper-beautiful-baby-bunny-rabbits-cute-white-baby-rabbit.jpg", "https://cdn.wallpapersafari.command/3/20/2CwjPD.jpg", "https://cdn4.sharechat.command/img_595318_1a1fd232_1671213592534_sc.jpg", "https://i.pinimg.command/originals/05/49/5a/05495abb66573cfc4d697be122b54531.jpg", "https://www.boredpanda.command/blog/wp-content/uploads/2021/11/cute-rabbits-307-618b7d91f120c__700.jpg", "https://i.ytimg.command/vi/65hXnBFRTnQ/maxresdefault.jpg", "https://w0.peakpx.command/wallpaper/1020/863/HD-wallpaper-adorable-fluffy-bunny-cute-rabbit-fluffy-adorable-bunny-cute-baby.jpg", "https://cdn.wallpapersafari.command/59/70/4HrRwe.jpg", "https://wallpaperaccess.command/full/83858.jpg", "https://www.ntu.ac.uk/__data/assets/image/0019/641305/rabbit.jpg", "https://cdn.pixabay.command/photo/2020/02/02/14/30/rabbit-4813172__340.jpg", "https://w0.peakpx.command/wallpaper/818/348/HD-wallpaper-cute-rabbit-cute-rabbit-lovely-green-color-beautiful.jpg", "https://wallpapers.command/images/featured/0g8mij2ea0et2gs4.jpg", "https://i.ytimg.command/vi/hDJkFLnmFHU/mqdefault.jpg", "https://t3.ftcdn.net/jpg/05/60/19/82/360_F_560198269_NaE7QBRQFRy2t4X7CnDe9GigXAe5HTad.jpg", "https://img5.goodfon.command/wallpaper/nbig/8/6c/iaitsa-colorful-krolik-paskha-spring-easter-eggs-bunny-cut-4.jpg", "https://i.redd.it/125ebgihdbu41.jpg", "https://i.pinimg.command/originals/86/f6/dc/86f6dc70f9c0492eb16e00fb0877848c.jpg", "https://i.ytimg.command/vi/c_cg-2f9RUw/hqdefault.jpg", "https://i.pinimg.command/originals/08/cc/b3/08ccb35a48d4d6b7712da31c4a059857.jpg", "https://m.media-amazon.command/images/I/41fO4oChXSL._AC_UF894,1000_QL80_.jpg", "https://i.pinimg.command/originals/08/cc/b3/08ccb35a48d4d6b7712da31c4a059857.jpg", "https://cdn.pixabay.command/photo/2014/06/21/08/43/rabbit-373691__340.jpg", "https://i.ytimg.command/vi/00MDZZP0CKE/maxresdefault.jpg", "https://livesweetblog.command/wp-content/uploads/2020/08/IMG_2937-1024x768(pp_w768_h576).jpg", "https://t3.ftcdn.net/jpg/05/58/30/26/360_F_558302664_usO2Ikpq0UZNmAps1dvIf29x2yS6ars5.jpg", "https://t4.ftcdn.net/jpg/05/58/59/75/360_F_558597598_XMJzQG0G7MTdz1lXC41Nwzy8mJsgvOfj.jpg", "https://i.pinimg.command/236x/f4/3e/09/f43e0997de88ff4100bc7e9d3da5d5ea.jpg", "https://i.pinimg.command/474x/2c/da/16/2cda162873cfcfab78bad0db344af5fa.jpg"]
 
 answer_me = [
   "Yes!", "No!", "Certainely", "Not Certain", "Maybe Yes!", "Maybe No!",
@@ -396,16 +202,12 @@ b = {'a': '𓂅', 'b': '✦', 'c': '𝖄', 'd': '⊹', 'e': '⋆', 'f': '⌕', '
 
 lis_decode = {'𓂅': 'a', '✦': 'b', '𝖄': 'c', '⊹': 'd', '⋆': 'e', '⌕': 'f', 'ꗃ': 'g', '𝕯': 'h', 'ഒ': 'i', '୨': 'j', '୧': 'k', '⌯': 'l', '﹅': 'm', '﹆': 'n', 'ଘ': 'o', 'ꕤ': 'p', 'ꔛ': 'q', '𓏲': 'r', 'ָ': 's', 'ǂ': 't', '𓍼': 'u', '⋈': 'v', 'ꮺ': 'w', '⌗': 'x', 'ꉂ': 'y', 'ᨒ': 'z', '๑': '1', '∇': '2', 'θ': '3', 'Λ': '4', 'Γ': '5', 'Ξ': '6', 'ω': '7', 'ξ': '8', 'δ': '9', 'ε': '0', 'ζ': 'A', 'η': 'B', '𝕬': 'C', '⊷': 'D', '⋭': 'E', '≟': 'F', '≲': 'G', '⍤': 'H', '⨒': 'I', '⊿': 'J', '𝟃': 'K', '⋴': 'L', '⊎': 'M', '⊅': 'N', '⋓': 'O', 'ӫ': 'P', '옻': 'Q', 'ഋ': 'R', '∵': 'S', '⋠': 'T', '≢': 'U', '≭': 'V', '⩲': 'W', '∔': 'X', '⊖': 'Y', '₪': 'Z', '✧': ' ', '↢': '.', '↡': ',', '↺': "'", '↻': '/', '↼': '?', '↾': '!', '↳': '@', '↲': '#', '↸': '$', '↹': '%', '⇏': '^', '⇪': '&', '⇫': '*', '⇬': '(', '⇭': ')', '⇮': '_', '⇯': '+', '⇻': '=', '⇺': '-', '⇹': '~', '⇸': '`', '⇷': '|', '⇾': '<', '⇽': '>', '⇲': ';', '⇱': ':', '⇰': '{', 'ↇ': '}', 'Ⅰ': '[', '円': ']'}
 
-tex = ""
-tex2 = ""
+
 
 prof_emoji = {"Cat" : "<a:catjam:1153311918535225404>", "Rabbit" : "<:innocent_rabbit:1153312818037280808>", "Hamster" : "<:hamsterr:1153313216940740719>", "Panda" : "<a:panda:1153313424256794634>", "Dog" : "<a:dogopdance:1153314038562951250>", "Not set" : ""}
 
 itemdesc = {"Bait": "Basic is a common item. It can be used to catch fishes."}
 
-items = {
-  "name":["Bait","Christmas Wallpaper","Purrbot Wallpaper","Anime Wallpaper","Batman Wallpaper","Superman Wallpaper","Spiderman Wallpaper","Ironman Wallpaper","Landscape Wallpaper","Valentines Wallpaper1","Valentines Wallpaper2"],
-  "cost": [10,500,1000,300,500,500,700,600,300,800,800]}
 
 wallpapers = {
   "Not Set" : "https://media.discordapp.net/attachments/1159490904990691338/1159792379172225107/wall.png?ex=658e98d3&is=657c23d3&hm=bb4577524e5dcf18e294102ab108a8388f803965004416ba64c4d82f1def9b0f&=&format=webp&quality=lossless&width=441&height=441",
@@ -501,7 +303,7 @@ async def unban(ctx, *, member):
   member_name, member_discriminator = member.split("#")
   for ban_entry in banned_users:
     user = ban_entry.user
-    if (user.name, user.discriminator) == (member.name, member.discriminator):
+    if (user.name, user.discriminator) == (member_name, member_discriminator):
       await ctx.guild.unban(user)
       await ctx.send(f"{user.name}#{user.discriminator} has been unbanned!")
 
@@ -535,7 +337,7 @@ async def help(interaction: discord.Interaction, command:typing.Optional[str]):
 
   elif command :
     with open("data/help.json") as f:
-      help_dict = json.load(f)
+      help_dict, help_args = json.load(f)
     command = command.lower()
     em.add_field(name=f"<a:symbol:1103534543895531610> {command}", value=help_dict[command], inline=False)
     em.add_field(name="Arguments Required :", value=help_args[command], inline=False)
@@ -567,7 +369,7 @@ async def info(interaction: discord.Interaction):
     user = 'purrfectkun'
   servers123 = str(len(client.guilds))
   with open("data/help.json") as f:
-    help_dict = json.load(f)
+    help_dict = json.load(f)[0]
   em = discord.Embed(title=client.user, description="ID = 863490119976878090", color=0xffb6e4)
   em.add_field(name="<:person:1085489445584785508> Owner :", value = user.mention, inline=False)
   em.add_field(name="<a:coding:1085489342551695371> Version :", value="PurrBot v2", inline=False)
@@ -603,11 +405,10 @@ async def inv(interaction: discord.Interaction):
 @discord.app_commands.describe(text="here comes the text that will be encoded")
 async def enc(interaction:discord.Interaction, text:str) : 
   try : 
-    global b, tex
+    global b
     for y in text : 
       cc = b[y]
-      tex = text.replace(y, cc)
-      text = tex
+      text = text.replace(y, cc)
     await interaction.response.send_message(text, ephemeral=False)
   except : 
     await interaction.response.send_message("Oops, looks like you passed invalid character. I can't encode like that! Just give some A-Z, integers and spaces. Special characters not allowed.")
@@ -1047,29 +848,23 @@ async def research(interaction:discord.Interaction, leveltype:discord.app_comman
 
 @client.tree.command(name="shop", description="Check available items to buy")  
 async def shop(interaction:discord.Interaction):
-  global items
+  with open("data/shop.json") as f:
+    items = json.load(f)
   col = discord.Color.random()
   em1 = discord.Embed(title="Shop", color=col)
-  if len(items["name"]) > 25 :
-    for i in range(0, 25) : 
-      itemname = items["name"][i]
-      itemcost = items["cost"][i]
-      em1.add_field(name=f"{i}{itemname}", value=f"<:purrcoin:1163085791401103471> **{itemcost}**", inline=False)
+  if len(items) > 25 :
+    for i in range(25) : 
+      em1.add_field(name=str(i)+". "+items[i]["itemname"], value=f"<:purrcoin:1163085791401103471> **{items[i]["price"]}**", inline=False)
     await interaction.response.send_message(embed=em1)
 
-    em2 = discord.Embed(color=col)
+    em1 = discord.Embed(color=col)
     for i in range(25, len(items["name"])) : 
-      itemname = items["name"][i]
-      itemcost = items["cost"][i]
-      em2.add_field(name=f"{i}{itemname}", value=f"<:purrcoin:1163085791401103471> **{itemcost}**", inline=False)
-    await interaction.channel.send(embed=em2)
-  elif len(items["name"]) <= 25 :
-    for i in range(0, len(items["name"])) : 
-      itemname = items["name"][i]
-      itemcost = items["cost"][i]
-      em1.add_field(name=f"{i}. {itemname}", value=f"<:purrcoin:1163085791401103471> **{itemcost}**", inline=False)
+      em1.add_field(name=str(i)+". "+items[i]["itemname"], value=f"<:purrcoin:1163085791401103471> **{items[i]["price"]}**", inline=False)
+    await interaction.channel.send(embed=em1)
+  else :
+    for i in range(len(items)) : 
+      em1.add_field(name=str(i)+". "+items[i]["itemname"], value=f"<:purrcoin:1163085791401103471> **{items[i]["price"]}**", inline=False)
     await interaction.response.send_message(embed=em1)
-
 
 @client.tree.command(name="buy", description="Buy an item from the shop")
 async def buyitem(interaction:discord.Interaction, itemid:int, quantity:typing.Optional[int]=1) : 
@@ -1078,37 +873,38 @@ async def buyitem(interaction:discord.Interaction, itemid:int, quantity:typing.O
     return
   elif quantity > 1000 : 
     await interaction.response.send_message("Quantity should be lower than 1000 -.-")
+  elif itemid<0:
+    await interaction.response.send_message("Negative itemID provided!")
   try : 
-    global items
-    df = pd.read_csv("userdata/users.csv")
+    with open("data/shop.json") as f :
+      items = json.load(f)
     itemlist = openinv(interaction.user.id)
-    place = userindex(interaction.user.id)
-    money = df.loc[place, "purrcoins"]
-    itemname = items["name"][itemid]
-    itemname = itemname.title()
-    if "Wallpaper" in itemname and quantity != 1 : 
-      quantity = 1
-      itemcost = items["cost"][itemid]
-      sen = f"Wallpapers are bought only once. Hence, you only bought 1 {itemname} for <:purrcoin:1163085791401103471> **{itemcost}**!" 
-
-    itemcost = (items["cost"][itemid])*quantity
-    with open("userdata/inventory.json") as f : 
-      data = json.load(f)
+    itemname = items[itemid]["itemname"]
     if itemname in itemlist : 
       await interaction.response.send_message(f"You already have {itemname} in your inventory!")
+      return
+    
+    df = pd.read_csv("userdata/users.csv")
+    place = userindex(interaction.user.id)
+    money = df.loc[place, "purrcoins"]
+    if "Wallpaper" in itemname and quantity != 1 : 
+      quantity = 1
+      sen = f"Wallpapers are bought only once. Hence, you only bought 1 {itemname} for <:purrcoin:1163085791401103471> **{itemcost}**!" 
 
-    elif money < itemcost :
+    itemcost = items[itemid]["price"]*quantity
+    if money < itemcost :
       await interaction.response.send_message(f"You need {itemcost-money} purrcoins to buy {quantity} {itemname}!")
       return
 
-    elif money >= itemcost :
+    else :
       sen = f"You bought {quantity} {itemname} for <:purrcoin:1163085791401103471> **{itemcost}**!"
       df.loc[place, "purrcoins"] -= itemcost
       if itemid == 0 : 
         df.loc[place, "baits"] += quantity
       else :
+        with open("userdata/inventory.json") as f:
+          data = json.load(f)
         for i in data : 
-          if str(interaction.user.id) in i :
             i[str(interaction.user.id)].append(itemname)
             break
         with open("userdata/inventory.json", "w") as f :
@@ -1122,18 +918,17 @@ async def buyitem(interaction:discord.Interaction, itemid:int, quantity:typing.O
 
 @client.tree.command(name="inventory", description="View your inventory")
 async def invento(interaction:discord.Interaction) : 
-  itemn = 1
   items = openinv(interaction.user.id)
-  df = pd.read_csv("userdata/users.csv")
-  place = userindex(interaction.user.id)
-  baits = df.loc[place, "baits"]
+  df = pd.read_csv("userdata/users.csv").query(f"id=={interaction.user.id}").reset_index()
+  if not df :
+    await interaction.response.send_message("You haven't opened your profile yet!\nUse `/profile` to open one and then run this command.")
+  baits = df.loc[0, "baits"]
   em1 = discord.Embed(title=f"{interaction.user.name}'s Inventory", color=discord.Color.random())
-  if len(items) != 0 : 
-    for x in range(len(items)) : 
-      em1.add_field(name=f"{itemn}. {items[x]}", value="", inline=False)
-      itemn += 1
-  else : 
+  if len(items) == 0 :
     em1.add_field(name="There is no item in your inventory :(\n Buy something from the shop.", value="")
+  else: 
+    for index, itemname in enumerate(items) : 
+      em1.add_field(name=f"{index+1}. {itemname}", value="", inline=False)
   em1.add_field(name="", value="", inline=False)
   em1.add_field(name="", value="", inline=False)
   em1.add_field(name=f"<:bait:1185874134417281164> baits x **{baits}**", value="", inline=False)
@@ -1144,14 +939,11 @@ async def invento(interaction:discord.Interaction) :
 async def useitem(interaction:discord.Interaction, item:int) :
   item -= 1
   inven = openinv(interaction.user.id)
-
   if len(inven) == 0 : 
     await interaction.response.send_message("You don't have any items in your inventory!")
-
   elif item > len(inven) : 
     await interaction.response.send_message("That item doesn't exist in your inventory!")
-
-  elif item <= len(inven) : 
+  else : 
     itemname = inven[item].title()
     if itemname.endswith("Wallpaper") : 
       await interaction.response.send_message("It is a wallpaper for your profile! You can use it by `/editprofile picture`.")
@@ -1161,36 +953,33 @@ async def useitem(interaction:discord.Interaction, item:int) :
 async def share(interaction:discord.Interaction, member:discord.Member, amount:int) :
   if member.bot : 
     await interaction.response.send_message("Why are you giving your money to a bot?")
-  elif interaction.user.id == member.id :
+  if interaction.user.id == member.id :
     await interaction.response.send_message("Are you trying to send money to yourself? For real?", ephemeral=True)
-  else : 
-    setup(member.id, member.name)
-    df = pd.read_csv("userdata/users.csv")
-    placeuser = userindex(interaction.user.id)
-    placemember = userindex(member.id)
-    moneyuser = df.loc[placeuser, "purrcoins"]
-
-    if moneyuser <= 0 :
-      await interaction.response.send_message("You don't have any money lol. Earn when")
-    elif moneyuser < amount :
-      await interaction.response.send_message("You don't have enough money to share!")
-    else :
-      df.loc[placeuser, "purrcoins"] -= amount
-      df.loc[placemember, "purrcoins"] += amount
-      df.to_csv("userdata/users.csv", index=False)
-      await interaction.response.send_message(f"You gave <:purrcoin:1163085791401103471>{amount} to {member.name}!")
+  
+  setup(interaction.user.id, interaction.user.name)
+  setup(member.id, member.name)
+  df = pd.read_csv("userdata/users.csv")
+  placeuser = userindex(interaction.user.id)
+  moneyuser = df.loc[placeuser, "purrcoins"]
+  if moneyuser <= 0 :
+    await interaction.response.send_message("You don't have any money lol. Earn when")
+  elif moneyuser < amount :
+    await interaction.response.send_message("You don't have enough money to share!")
+  else :
+    df.loc[placeuser, "purrcoins"] -= amount
+    df.loc[userindex(member.id), "purrcoins"] += amount
+    df.to_csv("userdata/users.csv", index=False)
+    await interaction.response.send_message(f"You gave <:purrcoin:1163085791401103471>{amount} to {member.name}!")
 
 
 @client.tree.command(name="gamble", description="Are you going for profit or loss?")
 async def gam(interaction:discord.Interaction, amount:int) :
-
   if amount < 100 :
     await interaction.response.send_message("You should have at least <:purrcoin:1163085791401103471> 100 to gamble!")
   else : 
-    chance = [True, False]
     df = pd.read_csv("userdata/users.csv")
     place = userindex(interaction.user.id)
-    if random.choice(chance) :
+    if random.randint(0, 1) :
       df.loc[place, "purrcoins"] += amount
       await interaction.response.send_message(f"You **won** <:purrcoin:1163085791401103471>{amount}!")
     else : 
@@ -1364,35 +1153,15 @@ async def finfo(interaction:discord.Interaction, tier:app_commands.Choice[int]) 
   app_commands.Choice(name="Bait", value=9),
 ])
 async def iteminfo(interaction:discord.Interaction, item:discord.app_commands.Choice[int]) :
-  global wallpapers, items, itemdesc
-  if item.name == "Christmas Wallpaper" :
-    des = "A special wallpaper for Christmas."
-  elif item.name == "Purrbot Wallpaper" :
-    des = "A wallpaper of Purrbot, expensive one!"
-  elif item.name == "Anime Wallpaper" :
-    des = "Name suggests, a beautiful anime wallpaper."
-  elif item.name == "Batman Wallpaper" :
-    des = "Wallpaper of The Dark Knight. Popular superhero these days."
-  elif item.name == "Superman Wallpaper" :
-    des = "Superman wallpaper, be invincible with this one!"
-  elif item.name == "Spiderman Wallpaper" :
-    des = "Peter Parker by day, Spiderman by night. Our favorite teenage superhero!"
-  elif item.name == "Ironman Wallpaper" :
-    des = "Tony stark is cool isn't it? If you like him, then here you go!"
-  elif item.name == "Landscape Wallpaper" :
-    des = "Who doesn't love a beautiful landscape? Make your profile look outstanding."
-  elif item.name == "Valentines Wallpaper1" :
-    des = "This one's exclusive! Pretty for those who are taken tho."
-  elif item.name == "Valentines Wallpaper2" :
-    des = "Second exclusive which is again really beautiful only for those who are taken hehe."
-  elif item.name == "Bait":
-    des = itemdesc(item.name)
-
-  em = discord.Embed(title=item.name, description=des, color=discord.Color.random())
-  pr = items["cost"][item.value]
+  with open("data/shop.json") as f:
+    items = json.load(f)
+  for i in range(items):
+    if items[i]["itemname"] == item.name: 
+      break
+  em = discord.Embed(title=item.name, description=items[i]["description"], color=discord.Color.random())
   if "Wallpaper" in item.name : 
     em.set_image(url=wallpapers[item.name])
-    em.set_footer(text=f"Price: {pr} purrcoins")
+    em.set_footer(text=f"Price: {items[i]["price"]} purrcoins")
   await interaction.response.send_message(embed = em)
 
 #______________________________________FUN________________________________________
@@ -1427,29 +1196,22 @@ async def echo(interaction: discord.Interaction, msg: str):
   app_commands.Choice(name="Dog", value=5)
 ])
 async def pet(interaction: discord.Interaction, pets:discord.app_commands.Choice[int]):
-  
+  with open("data/animals.json") as f:
+    pet_json = json.load(f)
   if pets.name == "Cat":
     em = discord.Embed(title=f"{interaction.user.name} orders for a cat 🐱", color=0xe67e22)
-    em.set_image(url=random.choice(cats))
-    
   elif pets.name == "Dog":
     em = discord.Embed(title=f"{interaction.user.name} gets a dog!", color=0xe74c3c)
-    em.set_image(url=random.choice(dogs))
-    
   elif pets.name == "Panda":
-    em = discord.Embed(
-      title=f"{interaction.user.name} is having a panda! So cute >.<",
-      color=interaction.user.color)
-    em.set_image(url=random.choice(pandas))
-    
+    em = discord.Embed(title=f"{interaction.user.name} is having a panda! So cute >.<", color=interaction.user.color)
   elif pets.name == "Hamster" : 
     em = discord.Embed(title=f"{interaction.user.name}, here is your cute hamster. Doesn't it look really cute (≧∀≦)ゞ", color=0x9b59b6)
-    em.set_image(url=random.choice(hamster))
-
   elif pets.name == "Rabbit" : 
     em = discord.Embed(title=f"Here's a cute bunny for ya, {interaction.user.name}!", color=0x2ecc71)
-    em.set_image(url=random.choice(rabbit))
-
+    
+  petName = pets.name.lower()
+  print(random.choice(pet_json[petName]))
+  em.set_image(url=random.choice(pet_json[petName]))
   em.set_footer(text="Hope you are happy now :D")
   await interaction.response.send_message(embed=em, ephemeral=False)
 
@@ -1457,12 +1219,7 @@ async def pet(interaction: discord.Interaction, pets:discord.app_commands.Choice
 @client.tree.command(name="pick1", description="Randomly chooses an object from the given options")
 @discord.app_commands.describe(option1="type your first option", option2="type your second option")
 async def pick(interaction: discord.Interaction, option1: str, option2: str):
-  ty6 = random.randint(1, 2)
-  if ty6 == 1:
-    chose = option1
-  elif ty6 == 2:
-    chose = option2
-  await interaction.response.send_message(f"I choose **{chose}** 🙋‍♂️", ephemeral=False)
+  await interaction.response.send_message(f"I choose **{random.choice([option1, option2])}** 🙋‍♂️", ephemeral=False)
 
 
 @client.tree.command(name="8ball", description="Ask a question and get an answer from the bot!")
@@ -1481,8 +1238,7 @@ async def ball(interaction: discord.Interaction, question: str):
 async def rolldice(interaction: discord.Interaction):
   await interaction.response.send_message(
     "Rolling....... <a:roll_dice:1028655608016142409>")
-  await interaction.edit_original_response(
-    content=f"You rolled a {random.randint(1,6)}!")
+  await interaction.edit_original_response(content=f"You rolled a {random.randint(1,6)}!")
 
 
 @client.tree.command(name="toss", description="Why not toss a coin and let it decide?")
@@ -1492,22 +1248,16 @@ async def rolldice(interaction: discord.Interaction):
   app_commands.Choice(name="Heads", value=1),
   app_commands.Choice(name="Tails", value=2)
 ])
-async def toss(interaction: discord.Interaction,
-               side: discord.app_commands.Choice[int]):
-  toss1 = random.randint(1, 2)
-  if toss1 == 1:
-    toss3 = "Heads"
-  elif toss1 == 2:
-    toss3 = "Tails"
-
-  if side.name == toss3:
+async def toss(interaction: discord.Interaction, side: discord.app_commands.Choice[int]):
+  result = random.choice(["Heads", "Tails"])
+  if side.name == result:
     await interaction.response.send_message(
-      f"**{toss3}**! Damn, you won! ( •̀ ω •́ )✧", ephemeral=False)
-  elif side.name != toss3:
+      f"**{result}**! Damn, you won! ( •̀ ω •́ )✧", ephemeral=False)
+  elif side.name != result:
     await interaction.response.send_message(
-      f"**{toss3}**! Oops, looks like you lost 💔", ephemeral=False)
+      f"**{result}**! Oops, looks like you lost 💔", ephemeral=False)
 
-
+# CONTINUE FROM HERE
 @client.tree.command(name="spamstart", description="start a spam for a given amount.")
 @discord.app_commands.describe(
   message="type the sentence/word you want",
@@ -1568,7 +1318,7 @@ async def rng(interaction: discord.Interaction, startnum: int, endnum: int):
 @client.tree.command(name="riddle", description="use this command to get a twisty riddle!")
 async def rid(interaction:discord.Interaction) : 
   rid_url = 'https://api.api-ninjas.command/v1/riddles'
-  r = requests.get(rid_url, headers={'X-Api-Key': 'BTspUmBIPI31D1TVhqwQrQ==gEeG6rS7mi0Fenkl'})
+  r = requests.get(rid_url, headers={'X-Api-Key': 'FEnW6LZPfHjmtNGdRtihvA==VRaEObBqXKoHkwIB'})
   rdq = r.json()[0]["question"]
   rda = r.json()[0]["answer"]
   await interaction.response.send_message(rdq, view=RiddAns(str(rda)))
@@ -1933,7 +1683,18 @@ async def logari(interaction:discord.Interaction, num:float) :
     
 #_______________________________ROLEPLAY_______________________________________
 
-
+@client.tree.command(name="hug", description="Why not hug others to show affection?")
+@discord.app_commands.describe(member="Mention the member you wanna hug")
+async def slap(interaction: discord.Interaction, member: discord.Member):
+  user_id = int(interaction.user.id)
+  person_id = int(member.id)
+  result = dataman("userdata/hug_count.json", user_id, person_id)
+  hug_gif = requests.get("https://api.otakugifs.xyz/gif?reaction=hug")
+  hug_gif = hug_gif.json()["url"]
+  em = discord.Embed(title=f"__{interaction.user.name}__ hugs __{member.name}__", color=interaction.user.color)
+  em.set_image(url=hug_gif)
+  em.set_footer(text=f"You hugged {member.name} {result} time(s)!")
+  await interaction.response.send_message(embed=em)
 
 
 @client.tree.command(name="slap", description="Don't hold your anger, just slap and calm yourself down~")

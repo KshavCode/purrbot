@@ -1,0 +1,40 @@
+{
+    "dog": [
+        "https://cf.ltkcdn.net/dogs/images/std/236742-800x515r1-cutest-puppy-videos.jpg",
+        "https://bestwishes.vip/wp-content/uploads/2020/12/3.jpeg",
+        "https://ichef.bbci.co.uk/news/976/cpsprodpb/EB24/production/_112669106_66030514-b1c2-4533-9230-272b8368e25f.jpg",
+        "https://dogexpress.in/wp-content/uploads/2017/05/Tiny.jpg"
+    ],
+    "cat": [
+        "https://d1hjkbq40fs2x4.cloudfront.net/2016-07-16/files/cat-sample_1313.jpg",
+        "https://www.teahub.io/photos/full/216-2168687_cat-photo-cat-pictures-high-quality.jpg",
+        "https://wallpaper.dog/large/10802305.jpg",
+        "https://i.ibb.co/7vGLS2G/Cute-Cat-GIF-Adorable-white-Scottish-fold-kitty-trying-to-catch-his-toy-but-he-can-t-cat-gifs-command.gif",
+        "https://i.ibb.co/BBgMtY9/Cute-Kitten-GIF-Super-cute-kitty-meowing-in-her-comfy-box-She-needs-her-mom-or-she-s-hungry-cat-gifs.gif"
+    ],
+    "panda": [
+        "https://media1.giphy.command/media/ewzF6uunnPn6L5amuW/200w.gif?cid=6c09b9521k9td7njdvuymcnzrwwm08qsedj400g6tkwp46uo&rid=200w.gif&ct=g"
+    ],
+    "hamster": [
+        "https://t4.ftcdn.net/jpg/05/61/40/53/360_F_561405378_tFqUXOUhDc13eBYtHpV5qChCWu0EN6eR.jpg",
+        "https://cf.ltkcdn.net/small-mammals/small-mammal-names/images/orig/323197-1600x912-hamster-flowers.jpg",
+        "https://d1muy2ct2wkbaz.cloudfront.net/video/465000/464811/580x325/0.jpg",
+        "https://www.eastcoastdaily.in/wp-content/uploads/2020/09/everyone-likes-chips.jpg",
+        "https://ih1.redbubble.net/image.4736607326.4847/mwo,x1000,ipad_2_skin-pad,1000x1000,f8f8f8.u2.jpg",
+        "https://t4.ftcdn.net/jpg/05/78/23/67/360_F_578236729_1Y0KL1rIgFulbmvapsBUiyAukc9Bod6M.jpg",
+        "https://images-cdn.ubuy.co.in/63f8336fab3ea80d5604fa67-hamster-cute-hamster-white-wall.jpg"
+    ],
+    "rabbit": [
+        "https://t3.ftcdn.net/jpg/05/70/60/74/360_F_570607483_xwyvxx2liLMmjwTDKULTh7LTsOmv6Umt.jpg",
+        "https://t4.ftcdn.net/jpg/05/60/46/57/360_F_560465710_VpBpJLv0yCT2GmDH8AFlJwoddYWtTeDG.jpg",
+        "https://t3.ftcdn.net/jpg/05/61/31/20/360_F_561312086_cvzegHUnmNN0ZLPZBVDb3BDuFKHJ1iXN.jpg",
+        "https://i2-prod.leicestermercury.co.uk/news/leicester-news/article7306132.ece/ALTERNATES/s1200b/0_gettyimages-1214873071-170667a.jpg",
+        "https://t4.ftcdn.net/jpg/05/58/60/47/360_F_558604762_6Q02BIpSwrpBIGgwCYdssBzVtCsXL3vV.jpg",
+        "https://www.peta.org/wp-content/uploads/2021/04/rabbit-blue-background.jpg",
+        "https://www.ntu.ac.uk/__data/assets/image/0019/641305/rabbit.jpg",
+        "https://t3.ftcdn.net/jpg/05/60/19/82/360_F_560198269_NaE7QBRQFRy2t4X7CnDe9GigXAe5HTad.jpg",
+        "https://i.redd.it/125ebgihdbu41.jpg",
+        "https://t3.ftcdn.net/jpg/05/58/30/26/360_F_558302664_usO2Ikpq0UZNmAps1dvIf29x2yS6ars5.jpg",
+        "https://t4.ftcdn.net/jpg/05/58/59/75/360_F_558597598_XMJzQG0G7MTdz1lXC41Nwzy8mJsgvOfj.jpg"
+    ]
+}

@@ -1,0 +1,57 @@
+[
+    {
+        "itemname": "Bait",
+        "price": 10,
+        "description": "An item which is used to catch fishes.\nDepends on your research level to know how many to buy in order for sufficient fishing."
+    },
+    {
+        "itemname": "Christmas Wallpaper",
+        "price": 500,
+        "description": "A special wallpaper for Christmas."
+    },
+    {
+        "itemname": "Purrbot Wallpaper",
+        "price": 1000,
+        "description": "Purrbot' favourite wallpaper, expensive one!"
+    },
+    {
+        "itemname": "Anime Wallpaper",
+        "price": 300,
+        "description": "Name as says, a beautiful anime wallpaper."
+    },
+    {
+        "itemname": "Batman Wallpaper",
+        "price": 500,
+        "description": "Wallpaper of The Dark Knight. Popular superhero these days."
+    },
+    {
+        "itemname": "Superman Wallpaper",
+        "price": 500,
+        "description": "Superman wallpaper, be invincible with this one!"
+    },
+    {
+        "itemname": "Spiderman Wallpaper",
+        "price": 700,
+        "description": "Peter Parker by day, Spiderman by night. Our favorite teenage superhero!"
+    },
+    {
+        "itemname": "Ironman Wallpaper",
+        "price": 600,
+        "description": "Tony stark is cool isn't it? If you like him, then here you go!"
+    },
+    {
+        "itemname": "Landscape Wallpaper",
+        "price": 300,
+        "description": "Who doesn't love a beautiful landscape? Make your profile look outstanding."
+    },
+    {
+        "itemname": "Valentines Wallpaper1",
+        "price": 800,
+        "description": "This one's exclusive! Pretty for those who are taken tho."
+    },
+    {
+        "itemname": "Valentines Wallpaper2",
+        "price": 800,
+        "description": "Second exclusive which is again really beautiful only for those who are taken hehe."
+    }
+]
