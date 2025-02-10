@@ -813,6 +813,27 @@ async def remind(interaction:discord.Interaction, message:str, time:str) :
   except : 
     await interaction.channel.send("I think you wrote wrong syntax. If it's right, then I apologize, they may be some error going to with me :(\nYou can report it using the feedback command if it didn't work correctly.")
 
+@client.tree.command(name="leetcodestats", description="Returns the leetcode stats of a user")
+async def lcstats(interaction:discord.Interaction, username:str) :
+  url = f"https://leetcode-stats-api.herokuapp.com/{username}"
+  try:
+    r = requests.get(url).json()
+    if r["status"] != "success":
+      await interaction.response.send_message("Kindly check if you provided the correct username, otherwise, this might just be an issue from the other side (It'll be fixed soon, else use `/feedback` to notify the creator).")
+    else : 
+      em = discord.Embed(title=f"LeetCode stats ({username})", color=interaction.user.color)
+      em.add_field(name="Total Solved", value=r["totalQuestions"], inline=False)
+      em.add_field(name="Easy Solved:", value=r["easySolved"], inline=False)
+      em.add_field(name="Medium Solved:", value=r["mediumSolved"], inline=False)
+      em.add_field(name="Hard Solved:", value=r["hardSolved"], inline=False)
+      em.add_field(name="Acceptance Rate:", value=r["acceptanceRate"], inline=False)
+      em.add_field(name="Rank:", value=r["ranking"], inline=False)
+      em.set_footer(text=f"Requested by {interaction.user.display_name}",icon_url=interaction.user.avatar)
+      await interaction.response.send_message(embed=em)
+  except: 
+    await interaction.response.send_message("There might be some small issue from the server side. Kindly try again for a few times.")
+    
+
 
 #________________________________________________________________________________
 
@@ -1457,7 +1478,7 @@ async def iteminfo(interaction:discord.Interaction, item:discord.app_commands.Ch
 async def fact(interaction: discord.Interaction):
   api_url = 'https://api.api-ninjas.com/v1/facts?limit=1'
   response = requests.get(
-    api_url, headers={'X-Api-Key': 'BTspUmBIPI31D1TVhqwQrQ==gEeG6rS7mi0Fenkl'})
+    api_url, headers={'X-Api-Key': 'FEnW6LZPfHjmtNGdRtihvA==VRaEObBqXKoHkwIB'})
   if response.status_code == requests.codes.ok:
     resultt = (response.json()[0]["fact"])
   else:
