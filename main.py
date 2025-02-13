@@ -12,6 +12,47 @@ pd.options.mode.chained_assignment = None
 async def change_status():
   await client.change_presence(activity=discord.Game(next(status)))
 
+@tasks.loop(seconds=30)
+async def generate_question():
+  server_channel = 1283774140783919125
+  channel = client.get_channel(server_channel)
+  difficultyChoice = random.choice(["EASY", "EASY", "EASY", "MEDIUM"])
+  n = 200
+  while True:
+    try:
+      rn = random.randint(1,n)
+      url = f"https://alfa-leetcode-api.onrender.com/problems?difficulty={difficultyChoice}&limit={n}"
+      r = requests.get(url).json()["problemsetQuestionList"][rn]
+      title = r["title"]
+      problemId = r["questionFrontendId"]
+      isPaid = r["isPaidOnly"]
+      acceptanceRate = r["acRate"]
+      tags = [f"`{x["name"]}`" for x in r["topicTags"]]
+      hasSolution = "Not Available" if not r["hasSolution"] else "Available"
+      # Getting the direct link
+      r2 = requests.get(f"https://leetcode-api-pied.vercel.app/problem/{problemId}").json()
+      category = r2["categoryTitle"]
+      urlQuestion = r2["url"]
+      
+      break
+    except IndexError:
+      n -= 100
+      continue
+    except KeyError:
+      continue
+
+  em = discord.Embed(title=f"LeetCode Problem #{problemId}", color=discord.Color.random())
+  em.add_field(name="Problem name", value=title, inline=False)
+  em.add_field(name="Difficulty", value=difficultyChoice.title(), inline=False)
+  em.add_field(name="Paid?", value=isPaid, inline=False)
+  em.add_field(name="Solution", value=hasSolution, inline=False)
+  em.add_field(name="Category", value=category, inline=False)
+  em.add_field(name="Acceptance Rate", value=f"{int(acceptanceRate)}%", inline=False)
+  em.add_field(name="Tags", value="  ".join(tags), inline=False)
+  em.add_field(name="Problem Link", value=urlQuestion ,inline=False)
+  em.set_thumbnail(url=client.user.avatar)
+  await channel.send(embed=em)
+
 # r = requests.head(url="https://discord.command/api/v1")
 # try:
 #   print(f"Rate limit {int(r.headers['Retry-After']) / 60} minutes left")
@@ -28,6 +69,7 @@ client.remove_command('help')
 @client.event
 async def on_ready():
   change_status.start()
+  generate_question.start()
   print("Bot Launched")
   try:
     client.tree.add_command(maths)
@@ -178,26 +220,19 @@ async def unban(ctx, *, member):
 @discord.app_commands.describe(command="enter the command name, which you want help with")
 async def help(interaction: discord.Interaction, command:typing.Optional[str]):
   em = discord.Embed(title="HELP", color=interaction.user.color)
-  if command == None:
-
+  if not command:
     em.add_field(name="<:commands:1103517903166382091>Normal Commands",
                  value="`logs`  `pfp`  `info`  `encode`  `decode`  `feedback`  `invite`  `userinfo`  `serverinfo`  `remindme`\n", inline=False)
-
-    em.add_field(name="<:commands:1103517903166382091>Game Commands", value="`profile`  `edit`  `dailylogin`  `research`  `balance`  `search`  `steal`  `shop`  `buy`  `inventory`  `use`  `share`  `gamble`  `fish`  `bucket`  `sellfish`  `fishinfo`  `leaderboard`\n", inline=False)
-    
+    em.add_field(name="<:commands:1103517903166382091>Game Commands", 
+                 value="`profile`  `edit`  `dailylogin`  `research`  `balance`  `search`  `steal`  `shop`  `buy`  `inventory`  `use`  `share`  `gamble`  `fish`  `bucket`  `sellfish`  `fishinfo`  `leaderboard`\n", inline=False)
     em.add_field(name="<:commands:1103517903166382091>Fun Commands",
-      value="`fact`  `riddle`  `echo`  `spam`  `spamstop`  `rate`  `toss`  `diceroll`  `8ball`  `pet`  `pick1`  `randomnum`  `hiddendm`",
-      inline=True)
+                 value="`fact`  `riddle`  `echo`  `spam`  `spamstop`  `rate`  `toss`  `diceroll`  `8ball`  `pet`  `pick1`  `randomnum`  `hiddendm`", inline=True)
     em.add_field(name="<:commands:1103517903166382091>Roleplay Commands",
-                 value="`pat`  `slap` `wish`",
-                 inline=False)
+                 value="`pat`  `slap` `wish`", inline=False)
     em.add_field(name="<:commands:1103517903166382091>Mathematical Commands",
-      value="`factorial`  `add`  `subtract`  `multiply`  `divide`  `exponent`  `log10`  `shapes`  `sqroot`",
-      inline=False)
-    
+                 value="`factorial`  `add`  `subtract`  `multiply`  `divide`  `exponent`  `log10`  `shapes`  `sqroot`", inline=False)
     em.add_field(name="<:commands:1103517903166382091>Moderation Commands",
-      value="`kick`  `purge`  `kaboom`  `poll`",
-      inline=False)
+                 value="`kick`  `purge`  `kaboom`  `poll`", inline=False)
 
   elif command :
     with open("data/help.json") as f:
@@ -232,13 +267,13 @@ async def info(interaction: discord.Interaction):
     user = 'purrfectkun'
   total_servers = str(len(client.guilds))
   with open("data/help.json") as f:
-    help_dict = json.load(f)[0]
+    NumberOfCommands = len(json.load(f)[0])
   em = discord.Embed(title=client.user, description="ID = 863490119976878090", color=0xffb6e4)
   em.add_field(name="<:person:1085489445584785508> Owner :", value = user.mention, inline=False)
   em.add_field(name="<a:coding:1085489342551695371> Version :", value="PurrBot v2", inline=False)
   em.add_field(name="<a:Discord:1085489545258217542> Library : ", value="discord.py 2.0")
   em.add_field(name="<:server:1085489879401639976> No. of Servers : ", value=total_servers, inline=False)
-  em.add_field(name="<:Cool:912744704460857375> No. of Commands : ", value=len(help_dict), inline=False)
+  em.add_field(name="<:Cool:912744704460857375> No. of Commands : ", value=NumberOfCommands, inline=False)
   em.add_field(name="<:people:1085588661980102671> Bot Users :", value=str(len({m.id for m in client.get_all_members()})), inline=False)
   em.add_field(name="<a:Errorr:1085489721926496346> Errors :", value="2 Errors", inline=False)
   em.add_field(name="<:thinking_cat_face:937049263509225502> Since :", value="Sunday, 11 July 2021", inline=False)
@@ -248,7 +283,7 @@ async def info(interaction: discord.Interaction):
 @client.tree.command(name="pfp", description="shows avatar of the member you mentioned or yours if not mentioned")
 @discord.app_commands.describe(member="leave it blank if you want your pfp to be displayed")
 async def pfp(interaction: discord.Interaction, member: discord.Member = None):
-  if member == None:
+  if not member:
     member = interaction.user
   em = discord.Embed(title=f"__Avatar of {member}__", color=interaction.user.color)
   em.set_image(url=member.avatar)
@@ -293,61 +328,55 @@ async def fedback(interaction:discord.Interaction) :
 @client.tree.command(name="userinfo", description="shows the information regarding a member")
 @discord.app_commands.describe(member="mention a member. Will show your info if none")
 async def userinfo(interaction:discord.Interaction, member:discord.Member=None) : 
-  user = member or interaction.user
-  roles = []
-  for r in user.roles : 
-    roles.append(str(r.mention))
-  colorcode = user.color 
-  uid = user.id
-  nickn = user.nick or "No nickname set"
-  created = user.created_at.strftime("%A, %B %d %Y, %I:%M:%S %p")
-  joined = user.joined_at.strftime("%A, %B %d %Y, %I:%M:%S %p")
-  avatar_url = user.display_avatar
-  role = len(user.roles)
-  if len(str(" | ").join([x.mention for x in user.roles])) > 1024:
-    rol = "Too many to display"
-  else : 
-    rol = " | ".join(roles)
-    
-  memorbot = user.bot 
   botpfp = client.user.avatar
-  if not memorbot : 
-    memorbot = "not a bot"
+  user = member or interaction.user
+  roles = [str(role.mention) for role in user.roles]
+  userColorCode = user.color 
+  userId = user.id
+  userNickname = user.nick or "No nickname set"
+  userCreatedAccountDate = user.created_at.strftime("%A, %B %d %Y, %I:%M:%S %p")
+  userJoinedServerDate = user.joined_at.strftime("%A, %B %d %Y, %I:%M:%S %p")
+  avatar_url = user.display_avatar
+  checkIfBot = "not a bot" if not user.bot else "a bot"
+  numberOfRoles = len(user.roles)
+  roles = " | ".join(roles)
+  if roles > 1024:
+    roles = "Too many to display"
   else : 
-    memorbot = "a bot"
+    roles = " | ".join(roles)
 
-  em = discord.Embed(title="User Information", description=f"ID = {uid}", color=colorcode)
+  em = discord.Embed(title="User Information", description=f"ID = {userId}", color=userColorCode)
   em.set_thumbnail(url=avatar_url)
   em.add_field(name="", value="")
   em.add_field(name="Member name : ", value=f"{user}", inline=False)
-  em.add_field(name="Nickname : ", value=f"{nickn}", inline=False)
-  em.add_field(name="Created on :", value=f"{created}", inline=False)
-  em.add_field(name="Joined on :", value=f"{joined}", inline=False)
-  em.add_field(name=f"Roles ({role}) :", value=f"{rol}", inline=False)
-  em.set_footer(text=f"{user} is {memorbot}", icon_url=botpfp)
+  em.add_field(name="Nickname : ", value=f"{userNickname}", inline=False)
+  em.add_field(name="Created on :", value=f"{userCreatedAccountDate}", inline=False)
+  em.add_field(name="Joined on :", value=f"{userJoinedServerDate}", inline=False)
+  em.add_field(name=f"Roles ({numberOfRoles}) :", value=f"{roles}", inline=False)
+  em.set_footer(text=f"{user} is {checkIfBot}", icon_url=botpfp)
   await interaction.response.send_message(embed=em)
 
 @client.tree.command(name="serverinfo", description="shows the information about the current server.")
 async def svinfo(interaction:discord.Interaction) : 
   sv = interaction.guild
-  svid = sv.id
-  svname = sv.name 
-  svcr = sv.created_at.strftime("%A, %B %d %Y, %I:%M:%S %p")
-  svown = sv.owner
-  svmem = sv.member_count
-  svtchan = len(sv.text_channels)
-  svvchan = len(sv.voice_channels)
-  svthumb = sv.icon
-  svem = len(sv.emojis)
+  serverId = sv.id
+  serverName = sv.name 
+  serverCreatedTime = sv.created_at.strftime("%A, %B %d %Y, %I:%M:%S %p")
+  serverOwner = sv.owner
+  serverMemberCount = sv.member_count
+  serverTextChannelCount = len(sv.text_channels)
+  serverVoiceChannelCount = len(sv.voice_channels)
+  serverImage = sv.icon
+  serverEmojis = len(sv.emojis)
 
-  em = discord.Embed(title=svname, description=f"Server ID : {svid}", color=interaction.user.color)
-  em.add_field(name=f"__Owner__ : *{svown}*", value="", inline=False)
-  em.add_field(name=f"__Total Members__ : *{svmem}*", value="", inline=False)
-  em.add_field(name=f"__Created At__ : *{svcr}*", value="", inline=False)
-  em.add_field(name=f"__Text Channels__ : *{svtchan}*", value="", inline=False)
-  em.add_field(name=f"__Voice Channels__ : *{svvchan}*", value="", inline=False)
-  em.add_field(name=f"__Emojis__ : *{svem}*", value="", inline=False)
-  em.set_thumbnail(url=svthumb)
+  em = discord.Embed(title=serverName, description=f"Server ID : {serverId}", color=interaction.user.color)
+  em.add_field(name=f"__Owner__ : *{serverOwner}*", value="", inline=False)
+  em.add_field(name=f"__Total Members__ : *{serverMemberCount}*", value="", inline=False)
+  em.add_field(name=f"__Created At__ : *{serverCreatedTime}*", value="", inline=False)
+  em.add_field(name=f"__Text Channels__ : *{serverTextChannelCount}*", value="", inline=False)
+  em.add_field(name=f"__Voice Channels__ : *{serverVoiceChannelCount}*", value="", inline=False)
+  em.add_field(name=f"__Emojis__ : *{serverEmojis}*", value="", inline=False)
+  em.set_thumbnail(url=serverImage)
   await interaction.response.send_message(embed=em)
 
 
@@ -411,7 +440,6 @@ async def lcstats(interaction:discord.Interaction, username:str) :
   except: 
     await interaction.response.send_message("There might be some small issue from the server side. Kindly try again for a few times.")
     
-
 
 #________________________________________________________________________________
 
