@@ -422,14 +422,16 @@ async def remind(interaction:discord.Interaction, message:str, time:str) :
 
 @client.tree.command(name="leetcodestats", description="Returns the leetcode stats of a user")
 async def lcstats(interaction:discord.Interaction, username:str) :
-  url = f"https://leetcode-stats-api.herokuapp.command/{username}"
+  url = f"https://leetcode-stats-api.herokuapp.com/{username}"
   try:
     r = requests.get(url).json()
     if r["status"] != "success":
       await interaction.response.send_message("Kindly check if you provided the correct username, otherwise, this might just be an issue from the other side (It'll be fixed soon, else use `/feedback` to notify the creator).")
+    if int(r["totalSolved"]) == 0:
+      await interaction.response.send_message("Kindly provide the correct username.")
     else : 
       em = discord.Embed(title=f"LeetCode stats ({username})", color=interaction.user.color)
-      em.add_field(name="Total Solved", value=r["totalQuestions"], inline=False)
+      em.add_field(name="Total Solved", value=f"{r["totalSolved"]} / {r["totalQuestions"]}", inline=False)
       em.add_field(name="Easy Solved:", value=r["easySolved"], inline=False)
       em.add_field(name="Medium Solved:", value=r["mediumSolved"], inline=False)
       em.add_field(name="Hard Solved:", value=r["hardSolved"], inline=False)
@@ -437,7 +439,8 @@ async def lcstats(interaction:discord.Interaction, username:str) :
       em.add_field(name="Rank:", value=r["ranking"], inline=False)
       em.set_footer(text=f"Requested by {interaction.user.display_name}",icon_url=interaction.user.avatar)
       await interaction.response.send_message(embed=em)
-  except: 
+  except Exception as e:
+    print(e)
     await interaction.response.send_message("There might be some small issue from the server side. Kindly try again for a few times.")
     
 
