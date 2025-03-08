@@ -12,7 +12,7 @@ pd.options.mode.chained_assignment = None
 async def change_status():
   await client.change_presence(activity=discord.Game(next(status)))
 
-@tasks.loop(seconds=30)
+@tasks.loop(hours=24)
 async def generate_question():
   server_channel = 1283774140783919125
   channel = client.get_channel(server_channel)
@@ -21,8 +21,9 @@ async def generate_question():
   while True:
     try:
       rn = random.randint(1,n)
+      headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
       url = f"https://alfa-leetcode-api.onrender.com/problems?difficulty={difficultyChoice}&limit={n}"
-      r = requests.get(url).json()["problemsetQuestionList"][rn]
+      r = requests.get(url, headers=headers).json()["problemsetQuestionList"][rn]
       title = r["title"]
       problemId = r["questionFrontendId"]
       isPaid = r["isPaidOnly"]
@@ -30,10 +31,9 @@ async def generate_question():
       tags = [f"`{x["name"]}`" for x in r["topicTags"]]
       hasSolution = "Not Available" if not r["hasSolution"] else "Available"
       # Getting the direct link
-      r2 = requests.get(f"https://leetcode-api-pied.vercel.app/problem/{problemId}").json()
+      r2 = requests.get(f"https://leetcode-api-pied.vercel.app/problem/{problemId}", headers=headers).json()
       category = r2["categoryTitle"]
       urlQuestion = r2["url"]
-      
       break
     except IndexError:
       n -= 100
