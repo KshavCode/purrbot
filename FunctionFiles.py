@@ -1,4 +1,4 @@
-import pandas as pd, json, os
+import pandas as pd, json, os, requests
 
 def setup(userid:int, author) : 
   if not os.path.exists("userdata/users.csv") : 
@@ -44,7 +44,7 @@ def increase_action_count(filename, userid, personid) :
     json.dump(file_data, w, indent=2)
     return file_data[userid][personid]
 
-def openinv(userid:str) :
+def openinv(userid:str)->list :
   userid = str(userid)
   with open("userdata/inventory.json") as f : 
     datafile = json.load(f)
@@ -56,3 +56,21 @@ def openinv(userid:str) :
 def userindex(userid:int) :
   df = pd.read_csv("userdata/users.csv")
   return df.index[df["id"] == userid][0]
+
+def retrieveLeetCodeDetails() -> tuple:
+  usernames = {"AnandSaxena": "Anand", "Shinzoo05":"Jasmine", "kshavcodes" : "Keshav", "singhsomay467" : "Somay", "akashhuge7" : "Shivam"}
+  problemsSolved = dict()
+  errorNames = []
+  for idx in usernames: 
+    url = f"https://leetcode-stats-api.herokuapp.com/{idx}"
+    try:
+      r = requests.get(url).json()
+      if r["status"] != "success":
+        return "Kindly check if you provided the correct username, otherwise, this might just be an issue from the other side (It'll be fixed soon, else use `/feedback` to notify the creator)."
+      else : 
+        problemsSolved[r["totalSolved"]] = usernames[idx]
+    except Exception as e:
+      errorNames.append(usernames[idx])
+      continue
+  
+  return ([f"{problemsSolved[i]} ({i})" for i in reversed(sorted(problemsSolved))], errorNames)

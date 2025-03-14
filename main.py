@@ -5,6 +5,7 @@ from discord.ext import commands, tasks
 import random, pandas as pd, requests, asyncio, typing, math, json, FunctionFiles as ff
 from itertools import cycle
 from fractions import Fraction
+import datetime
 
 pd.options.mode.chained_assignment = None
 
@@ -12,7 +13,7 @@ pd.options.mode.chained_assignment = None
 async def change_status():
   await client.change_presence(activity=discord.Game(next(status)))
 
-@tasks.loop(hours=24)
+@tasks.loop(hours=48)
 async def generate_question():
   server_channel = 1283774140783919125
   channel = client.get_channel(server_channel)
@@ -52,6 +53,22 @@ async def generate_question():
   em.add_field(name="Problem Link", value=urlQuestion ,inline=False)
   em.set_thumbnail(url=client.user.avatar)
   await channel.send(embed=em)
+  
+  
+@tasks.loop(hours=168)
+async def generate_leaderboard():
+  server_channel = 849334888434761781
+  channel = client.get_channel(server_channel)
+  positionList, errorList = ff.retrieveLeetCodeDetails()
+  string = ""
+  for index, name in enumerate(positionList):
+    string += f"{index+1}. {name}\n"
+  em = discord.Embed(title="LEADERBOARD", color=discord.Color.random())
+  em.add_field(name=string, value="\u200b", inline=False)
+  if errorList:
+    em.add_field(name=f"*Couldn't retrieve for {", ".join(errorList)}. Either a server error or they haven't made account yet*", value="\u200b", inline=False)
+  em.set_footer(text=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+  await channel.send(embed=em)
 
 # r = requests.head(url="https://discord.command/api/v1")
 # try:
@@ -69,7 +86,8 @@ client.remove_command('help')
 @client.event
 async def on_ready():
   change_status.start()
-  generate_question.start()
+  # generate_question.start()
+  generate_leaderboard.start()
   print("Bot Launched")
   try:
     client.tree.add_command(maths)
