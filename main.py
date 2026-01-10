@@ -6,8 +6,88 @@ import random, pandas as pd, requests, asyncio, typing, math, json, FunctionFile
 from itertools import cycle
 from fractions import Fraction
 import datetime
+import functools
 
 pd.options.mode.chained_assignment = None
+with open("secrets.json") as f:
+  DISCORD_TOKEN = json.load(f)["discord"]
+  
+
+# File paths and simple I/O helpers
+USER_CSV = "userdata/users.csv"
+INV_FILE = "userdata/inventory.json"
+FEEDBACK_FILE = "feedback.txt"
+
+def read_users():
+  return pd.read_csv(USER_CSV)
+
+def save_users(df):
+  df.to_csv(USER_CSV, index=False)
+
+def load_json(path):
+  with open(path, "r", encoding="utf-8") as fh:
+    return json.load(fh)
+
+def save_json(path, data):
+  with open(path, "w", encoding="utf-8") as fh:
+    json.dump(data, fh, indent=2)
+
+def append_text(path, text):
+  with open(path, "a", encoding="utf-8") as fh:
+    fh.write(text)
+
+# --- Async cache and helpers for fast outputs ---
+USERS_CACHE = None
+USERS_CACHE_LOCK = None
+USERS_DIRTY = False
+
+def get_users_df():
+  global USERS_CACHE
+  if USERS_CACHE is None:
+    USERS_CACHE = read_users()
+  return USERS_CACHE
+
+def mark_users_dirty():
+  global USERS_DIRTY
+  USERS_DIRTY = True
+
+async def async_save_users(df=None):
+  """Schedule saving users to disk in a background thread."""
+  loop = asyncio.get_running_loop()
+  if df is None:
+    df = USERS_CACHE
+  if df is None:
+    return
+  await loop.run_in_executor(None, save_users, df)
+  global USERS_DIRTY
+  USERS_DIRTY = False
+
+async def autosave_task():
+  """Background task that periodically persists user data if dirty."""
+  await client.wait_until_ready()
+  while not client.is_closed():
+    try:
+      if USERS_DIRTY:
+        await async_save_users()
+    except Exception:
+      pass
+    await asyncio.sleep(5)
+
+# Run blocking functions in executor to avoid blocking the event loop
+async def run_blocking(func, *args, **kwargs):
+  loop = asyncio.get_running_loop()
+  return await loop.run_in_executor(None, functools.partial(func, *args, **kwargs))
+
+# Embed factory for consistent, decorated embeds
+def mk_embed(title: str, description: str = None, color=None, footer: str = None, thumbnail: str = None):
+  col = color if color is not None else discord.Color.random()
+  em = discord.Embed(title=title, description=description or "", color=col)
+  em.timestamp = datetime.datetime.utcnow()
+  if footer:
+    em.set_footer(text=footer, icon_url=client.user.avatar)
+  if thumbnail:
+    em.set_thumbnail(url=thumbnail)
+  return em
 
 @tasks.loop(seconds=120)
 async def change_status():
@@ -57,7 +137,7 @@ async def generate_question():
   
 @tasks.loop(hours=168)
 async def generate_leaderboard():
-  server_channel = 849334888434761781
+  server_channel = 1335335720566390834
   channel = client.get_channel(server_channel)
   positionList, errorList = ff.retrieveLeetCodeDetails()
   string = ""
@@ -86,8 +166,9 @@ client.remove_command('help')
 @client.event
 async def on_ready():
   change_status.start()
-  # generate_question.start()
+  generate_question.start()
   generate_leaderboard.start()
+  client.loop.create_task(autosave_task())
   print("Bot Launched")
   try:
     client.tree.add_command(maths)
@@ -237,10 +318,10 @@ async def unban(ctx, *, member):
 @client.tree.command(name="help", description="lists out all the available commands of the Purrbot")
 @discord.app_commands.describe(command="enter the command name, which you want help with")
 async def help(interaction: discord.Interaction, command:typing.Optional[str]):
-  em = discord.Embed(title="HELP", color=interaction.user.color)
+  em = mk_embed("HELP", color=interaction.user.color)
   if not command:
     em.add_field(name="<:commands:1103517903166382091>Normal Commands",
-                 value="`logs`  `pfp`  `info`  `encode`  `decode`  `feedback`  `invite`  `userinfo`  `serverinfo`  `remindme`\n", inline=False)
+           value="`logs`  `pfp`  `info`  `encode`  `decode`  `feedback`  `invite`  `userinfo`  `serverinfo`  `remindme`\n", inline=False)
     em.add_field(name="<:commands:1103517903166382091>Game Commands", 
                  value="`profile`  `edit`  `dailylogin`  `research`  `balance`  `search`  `steal`  `shop`  `buy`  `inventory`  `use`  `share`  `gamble`  `fish`  `bucket`  `sellfish`  `fishinfo`  `leaderboard`\n", inline=False)
     em.add_field(name="<:commands:1103517903166382091>Fun Commands",
@@ -269,12 +350,12 @@ async def help(interaction: discord.Interaction, command:typing.Optional[str]):
 
 @client.tree.command(name="logs", description="Tells you about the recent updates and fixes")
 async def log(interaction: discord.Interaction):
-  em = discord.Embed(title="PurrBot Logs, 11 February 2025", description="*Due to financial reasons, Purrbot was shut down. But now, it has been revived again and will be programmed actively. Sorry for inconvinience the bot will work as expected and in a much smoother way!*\n*If you contact any kind of error from the bot, you can always use the `/feedback` command which will notify the developer.*", color = 0x3498db)
+  em = mk_embed("PurrBot Logs, 11 February 2025", description="*Due to financial reasons, Purrbot was shut down. But now, it has been revived again and will be programmed actively. Sorry for inconvinience the bot will work as expected and in a much smoother way!*\n*If you contact any kind of error from the bot, you can always use the `/feedback` command which will notify the developer.*", color = 0x3498db)
   #<a:star_2:1085488210064461955> for updates
   em.add_field(name="Updates <a:blu_glitter:1161309978099986492>", value="<a:star_2:1085488210064461955> __New Commands__ -> `leetcodestats`\n<a:star_2:1085488210064461955> __Removed Commands__ -> `spamstart` `spamstop`", inline=False)
   #<:wren:1105395863955714059> for fixes
   em.add_field(name="Fixes", value="Slight error in `fact` and `riddle`.")
-  em.set_footer(text="You can send feedbacks using /feedback.", icon_url=client.user.avatar)
+  em.set_footer(text="You can send feedbacks using /feedback.")
   await interaction.response.send_message(embed=em, ephemeral=False)
 
 @client.tree.command(name="info", description="Gives information regarding the Bot Status")
@@ -286,7 +367,7 @@ async def info(interaction: discord.Interaction):
   total_servers = str(len(client.guilds))
   with open("data/help.json") as f:
     NumberOfCommands = len(json.load(f)[0])
-  em = discord.Embed(title=client.user, description="ID = 863490119976878090", color=0xffb6e4)
+  em = mk_embed(str(client.user), description="ID = 863490119976878090", color=0xffb6e4)
   em.add_field(name="<:person:1085489445584785508> Owner :", value = user.mention, inline=False)
   em.add_field(name="<a:coding:1085489342551695371> Version :", value="PurrBot v2", inline=False)
   em.add_field(name="<a:Discord:1085489545258217542> Library : ", value="discord.py 2.0")
@@ -303,9 +384,8 @@ async def info(interaction: discord.Interaction):
 async def pfp(interaction: discord.Interaction, member: discord.Member = None):
   if not member:
     member = interaction.user
-  em = discord.Embed(title=f"__Avatar of {member}__", color=interaction.user.color)
+  em = mk_embed(f"__Avatar of {member}__", color=interaction.user.color, footer=f"~requsted by {interaction.user.name}")
   em.set_image(url=member.avatar)
-  em.set_footer(text=f"~requsted by {interaction.user.name}")
   await interaction.response.send_message(embed=em, ephemeral=False)
 
 
@@ -441,25 +521,27 @@ async def remind(interaction:discord.Interaction, message:str, time:str) :
 @client.tree.command(name="leetcodestats", description="Returns the leetcode stats of a user")
 async def lcstats(interaction:discord.Interaction, username:str) :
   url = f"https://leetcode-stats-api.herokuapp.com/{username}"
+  await interaction.response.defer()
   try:
-    r = requests.get(url).json()
-    if r["status"] != "success":
-      await interaction.response.send_message("Kindly check if you provided the correct username, otherwise, this might just be an issue from the other side (It'll be fixed soon, else use `/feedback` to notify the creator).")
-    if int(r["totalSolved"]) == 0:
-      await interaction.response.send_message("Kindly provide the correct username.")
-    else : 
-      em = discord.Embed(title=f"LeetCode stats ({username})", color=interaction.user.color)
-      em.add_field(name="Total Solved", value=f"{r["totalSolved"]} / {r["totalQuestions"]}", inline=False)
-      em.add_field(name="Easy Solved:", value=r["easySolved"], inline=False)
-      em.add_field(name="Medium Solved:", value=r["mediumSolved"], inline=False)
-      em.add_field(name="Hard Solved:", value=r["hardSolved"], inline=False)
-      em.add_field(name="Acceptance Rate:", value=r["acceptanceRate"], inline=False)
-      em.add_field(name="Rank:", value=r["ranking"], inline=False)
-      em.set_footer(text=f"Requested by {interaction.user.display_name}",icon_url=interaction.user.avatar)
-      await interaction.response.send_message(embed=em)
+    r = await run_blocking(requests.get, url)
+    r = r.json()
+    if r.get("status") != "success":
+      await interaction.followup.send("Kindly check if you provided the correct username, otherwise, this might just be an issue from the other side.")
+      return
+    if int(r.get("totalSolved", 0)) == 0:
+      await interaction.followup.send("Kindly provide the correct username.")
+      return
+    em = mk_embed(f"LeetCode stats ({username})", color=interaction.user.color, footer=f"Requested by {interaction.user.display_name}")
+    em.add_field(name="Total Solved", value=f"{r.get('totalSolved')} / {r.get('totalQuestions')}", inline=False)
+    em.add_field(name="Easy Solved:", value=r.get('easySolved'), inline=False)
+    em.add_field(name="Medium Solved:", value=r.get('mediumSolved'), inline=False)
+    em.add_field(name="Hard Solved:", value=r.get('hardSolved'), inline=False)
+    em.add_field(name="Acceptance Rate:", value=r.get('acceptanceRate'), inline=False)
+    em.add_field(name="Rank:", value=r.get('ranking'), inline=False)
+    await interaction.followup.send(embed=em)
   except Exception as e:
     print(e)
-    await interaction.response.send_message("There might be some small issue from the server side. Kindly try again for a few times.")
+    await interaction.followup.send("There might be some small issue from the server side. Kindly try again in a moment.")
     
 
 #________________________________________________________________________________
@@ -468,7 +550,7 @@ async def lcstats(interaction:discord.Interaction, username:str) :
 @app_commands.checks.cooldown(1, 3600*24, key=lambda i: (i.user.id))
 @client.tree.command(name="dailylogin", description="Gives you currency every day")
 async def dailylogin(interaction:discord.Interaction):
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   lvl = df.loc[place, "dailylevel"]
   extramess = ""
@@ -476,7 +558,7 @@ async def dailylogin(interaction:discord.Interaction):
     df.loc[place, "purrgems"] += int(lvl/5)
     extramess = f"<:purrgem:1163086619348303902> Your daily level is {lvl}! You received **{int(lvl/5)}** gem(s)."
   df.loc[place, "purrcoins"] += 100+(lvl*10)
-  df.to_csv("userdata/users.csv", index=False)
+  save_users(df)
   await interaction.response.send_message(f"<:purrcoin:1163085791401103471> You got **{100+(lvl*10)}** purrcoins from your daily login!\n{extramess}")
 
 
@@ -488,7 +570,7 @@ async def profile(interaction: discord.Interaction, member:typing.Optional[disco
     await interaction.response.send_message("Bots cannot have profiles.", ephemeral=True)
   ff.setup(member.id, member.name)
   global wallpapers
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(member.id)
   df.loc[place, "username"] = member.name
   nn = df.loc[place, "nickname"]
@@ -519,7 +601,7 @@ async def profile(interaction: discord.Interaction, member:typing.Optional[disco
 @edit.command(name="nick", description="Use this command to edit your nickname in your profile")
 @discord.app_commands.describe(val="New value to change the existing one")
 async def chgname(interaction:discord.Interaction, val:str) : 
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   if len(val) > 20 : 
     await interaction.response.send_message("Your nickname cannot have more than 20 characters!", ephemeral=True)
@@ -527,14 +609,14 @@ async def chgname(interaction:discord.Interaction, val:str) :
     await interaction.response.send_message("Your nickname is too short!", ephemeral=True)
   else : 
     df.loc[place, "nickname"] = val
-    df.to_csv("userdata/users.csv", index=False)
+    save_users(df)
     await interaction.response.send_message("Overwriting of data successful!", ephemeral=True)
 
 
 @edit.command(name="age", description="Use this command to edit your age in your profile")
 @discord.app_commands.describe(val="New value to change the existing one")
 async def chgage(interaction:discord.Interaction, val:int) : 
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   if val <= 9 : 
     await interaction.response.send_message("Are you really that small? Stay away from discord if I suggest.", ephemeral=True)
@@ -542,14 +624,14 @@ async def chgage(interaction:discord.Interaction, val:int) :
     await interaction.response.send_message("Woah, woah. Are you a grandparent? Enter your real age if you are wanting to change it.", ephemeral=True)
   else : 
     df.loc[place, "age"] = val
-    df.to_csv("userdata/users.csv", index=False)
+    save_users(df)
     await interaction.response.send_message("Overwriting of data successful!", ephemeral=True)
 
 
 @edit.command(name="about", description="Use this command to edit your about section in your profile")
 @discord.app_commands.describe(val="New value to change the existing one")
 async def chgabout(interaction:discord.Interaction, val:str) : 
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   if len(val) > 100 : 
     await interaction.response.send_message("Isn't it too lengthy? Don't go on typing your autobiography.", ephemeral=True)
@@ -557,7 +639,7 @@ async def chgabout(interaction:discord.Interaction, val:str) :
     await interaction.response.send_message("Why are you even bothering to type that :skull:. At least type something more about yourself.", ephemeral=True)
   else : 
     df.loc[place, "bio"] = val
-    df.to_csv("userdata/users.csv", index=False)
+    save_users(df)
     await interaction.response.send_message("Overwriting of data successful!", ephemeral=True)
 
 
@@ -571,10 +653,10 @@ async def chgabout(interaction:discord.Interaction, val:str) :
   app_commands.Choice(name="Dog", value=5)
 ])
 async def chgpet(interaction:discord.Interaction, val:discord.app_commands.Choice[int]):
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   df.loc[place, "favpet"] = val.name
-  df.to_csv("userdata/users.csv", index=False)
+  save_users(df)
   await interaction.response.send_message("Overwriting of data successful!", ephemeral=True)
 
 
@@ -586,10 +668,10 @@ async def chgpet(interaction:discord.Interaction, val:discord.app_commands.Choic
   app_commands.Choice(name="Prefer not to say", value=3)
 ])
 async def chggen(interaction:discord.Interaction, val:discord.app_commands.Choice[int]) :
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   df.loc[place, "gender"] = val.name
-  df.to_csv("userdata/users.csv", index=False)
+  save_users(df)
   await interaction.response.send_message("Overwriting of data successful!", ephemeral=True)
 
 
@@ -609,7 +691,7 @@ async def chggen(interaction:discord.Interaction, val:discord.app_commands.Choic
   app_commands.Choice(name="Valentines Wallpaper2", value=11)
 ])
 async def chgwall(interaction:discord.Interaction, val:discord.app_commands.Choice[int]) : 
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   if val.name == "Default" : 
     df.loc[place, "wallpaper"] = "Not Set"
@@ -620,7 +702,7 @@ async def chgwall(interaction:discord.Interaction, val:discord.app_commands.Choi
       await interaction.response.send_message("Overwriting of data successful!", ephemeral=True)
     else : 
       await interaction.response.send_message("You don't have this wallpaper in your inventory! Buy it from the shop please.", ephemeral=True)
-  df.to_csv("userdata/users.csv", index=False)
+  save_users(df)
 
 
 @edit.command(name="color", description="Change the embed color of your profile")
@@ -642,16 +724,16 @@ async def chgwall(interaction:discord.Interaction, val:discord.app_commands.Choi
   app_commands.Choice(name="darkgrey", value=0x546e7a)
 ])
 async def chgcol(interaction:discord.Interaction, val:discord.app_commands.Choice[int]) :
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   df.loc[place, "embcolor"] = val.value
-  df.to_csv("userdata/users.csv", index=False)
+  save_users(df)
   await interaction.response.send_message("Overwriting of data successful!", ephemeral=True)
 
 
 @client.tree.command(name="balance", description="Shows your balance")
 async def balance(interaction:discord.Interaction):
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   coins = df.loc[place, "purrcoins"]
   gems = df.loc[place, "purrgems"]
@@ -672,7 +754,7 @@ async def balance(interaction:discord.Interaction):
   app_commands.Choice(name="premium", value=8),
 ])
 async def leaderboard(interaction:discord.Interaction, basis:app_commands.Choice[int]) :
-  df = pd.read_csv("userdata/users.csv") 
+  df = read_users()
   board = df.sort_values(by=basis.name, ascending=False).head(10)
   board = board[["username", basis.name]].to_string(index=False)
   await interaction.response.send_message(f"`{board}`")
@@ -683,27 +765,27 @@ async def leaderboard(interaction:discord.Interaction, basis:app_commands.Choice
 async def search(interaction:discord.Interaction):
   chances = [20, 30, 50, 20, 0, 0, 20, 30, 0]
   chance = random.choice(chances)
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   if chance == 0 :
     await interaction.response.send_message("You searched and found nothing :(")
   else : 
     await interaction.response.send_message(f"<:purrcoin:1163085791401103471> You searched and found **{chance}** purrcoins! <:purrcoin:1163085791401103471>")
     df.loc[place, "purrcoins"] += chance
-    df.to_csv("userdata/users.csv", index=False)
+    save_users(df)
 
 
 @app_commands.checks.cooldown(1, 5, key=lambda i: (i.user.id))
 @client.tree.command(name="steal", description="You get 50% more purrcoins but have a chance to lose some.")
 async def steal(interaction:discord.Interaction):
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
 
   if df.loc[place, "purrcoins"] > 50 : 
     chances = [60,70,-80,60,-60,60,70,80,90,90,100,-50,-50,70,80,-70,-90]
     chance = random.choice(chances)
     df.loc[place, "purrcoins"] += chance
-    df.to_csv("userdata/users.csv", index=False)
+    save_users(df)
     if chance < 0 : 
       await interaction.response.send_message(f"<:purrcoin:1163085791401103471> You tried to steal but got caught and lost **{chance}** purrcoins <:purrcoin:1163085791401103471>")
     else : 
@@ -719,7 +801,7 @@ async def steal(interaction:discord.Interaction):
   app_commands.Choice(name="fishlevel", value=2)
 ])
 async def research(interaction:discord.Interaction, leveltype:discord.app_commands.Choice[int]):
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   money = df.loc[place, "purrcoins"]
   level = df.loc[place, leveltype.name]
@@ -731,11 +813,11 @@ async def research(interaction:discord.Interaction, leveltype:discord.app_comman
       chance = bool(random.randint(0, 1))
       df.loc[place, "purrcoins"] -= cost
       if not chance : 
-        df.to_csv("userdata/users.csv", index=False)
+        save_users(df)
         await interaction.response.send_message("You researched but found nothing sadly.......")
       else: 
         df.loc[place, "dailylevel"] += 1
-        df.to_csv("userdata/users.csv", index=False)
+        save_users(df)
         await interaction.response.send_message(f"The research is a success! Your daily level has been upgraded to **Level {level+1}**")
   else : 
     cost = int(1000*1.5*level)
@@ -744,7 +826,7 @@ async def research(interaction:discord.Interaction, leveltype:discord.app_comman
     elif money > cost : 
       df.loc[place, "purrcoins"] -= cost
       df.loc[place, "fishlevel"] += 1
-      df.to_csv("userdata/users.csv", index=False)
+      save_users(df)
       await interaction.response.send_message(f"You researched with the cost of {cost} purrcoins! Your fishing level has been upgraded to **Level {level+1}**")
 
 
@@ -785,7 +867,7 @@ async def buyitem(interaction:discord.Interaction, itemid:int, quantity:typing.O
     if itemname in itemlist : 
       await interaction.response.send_message(f"You already have {itemname} in your inventory!")
     
-    df = pd.read_csv("userdata/users.csv")
+    df = read_users()
     place = ff.userindex(interaction.user.id)
     money = df.loc[place, "purrcoins"]
     if "Wallpaper" in itemname and quantity != 1 : 
@@ -801,7 +883,7 @@ async def buyitem(interaction:discord.Interaction, itemid:int, quantity:typing.O
       df.loc[place, "purrcoins"] -= itemcost
       if itemid == 0 : 
         df.loc[place, "baits"] += quantity
-        df.to_csv("userdata/users.csv", index=False)
+        save_users(df)
       else :
         with open("userdata/inventory.json") as f:
           data = json.load(f)
@@ -816,7 +898,7 @@ async def buyitem(interaction:discord.Interaction, itemid:int, quantity:typing.O
 @client.tree.command(name="inventory", description="View your inventory")
 async def invento(interaction:discord.Interaction) : 
   items = ff.openinv(interaction.user.id)
-  df = pd.read_csv("userdata/users.csv").query(f"id=={interaction.user.id}").reset_index()
+  df = read_users().query(f"id=={interaction.user.id}").reset_index()
   if df.empty :
     await interaction.response.send_message("You haven't opened your profile yet!\nUse `/profile` to open one and then run this command.")
   baits = df.loc[0, "baits"]
@@ -855,7 +937,7 @@ async def share(interaction:discord.Interaction, member:discord.Member, amount:i
   
   ff.setup(interaction.user.id, interaction.user.name)
   ff.setup(member.id, member.name)
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   placeuser = ff.userindex(interaction.user.id)
   moneyuser = df.loc[placeuser, "purrcoins"]
   if moneyuser <= 0 :
@@ -865,7 +947,7 @@ async def share(interaction:discord.Interaction, member:discord.Member, amount:i
   else :
     df.loc[placeuser, "purrcoins"] -= amount
     df.loc[ff.userindex(member.id), "purrcoins"] += amount
-    df.to_csv("userdata/users.csv", index=False)
+    save_users(df)
     await interaction.response.send_message(f"You gave <:purrcoin:1163085791401103471>{amount} to {member.name}!")
 
 
@@ -874,7 +956,7 @@ async def gam(interaction:discord.Interaction, amount:int) :
   if amount < 100 :
     await interaction.response.send_message("You should have at least <:purrcoin:1163085791401103471> 100 to gamble!")
   else : 
-    df = pd.read_csv("userdata/users.csv")
+    df = read_users()
     place = ff.userindex(interaction.user.id)
     if df.loc[place, "purrcoins"] < amount:
       await interaction.response.send_message("You don't have that much money!")
@@ -886,12 +968,12 @@ async def gam(interaction:discord.Interaction, amount:int) :
       else : 
         df.loc[place, "purrcoins"] -= amount
         await interaction.response.send_message(f"You **lost** <:purrcoin:1163085791401103471>{amount}!")
-      df.to_csv("userdata/users.csv", index=False)
+      save_users(df)
 
 
 @client.tree.command(name="fish", description="Go fishing and get some fish!")
 async def fish(interaction:discord.Interaction) :
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   level = df.loc[place, "fishlevel"]
   baits = df.loc[place, "baits"]
@@ -911,13 +993,13 @@ async def fish(interaction:discord.Interaction) :
     df.loc[place, f] += 1
     df.loc[place, "totalfishes"] += 1
     caught[f] += 1
-  df.to_csv("userdata/users.csv", index=False)
+  save_users(df)
   await interaction.response.send_message(f"You caught:\n<:basic:1185599289368526898> **{caught['basic']}** basic fish\n<:regular:1185599334310490123> **{caught['regular']}** regular fish\n<:elite:1185599299451617372> **{caught['elite']}** elite fish\n<:premium:1185599320276340806> **{caught['premium']}** premium fish\n<:epic:1185599310356820048> **{caught['epic']}** epic fish\n<:supreme:1185599340622925974> **{caught['supreme']}** supreme fish")
 
 
 @client.tree.command(name="bucket", description="Shows you the total number of fishes that you have caught.")
 async def bucket(interaction:discord.Interaction) :
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   basic = df.loc[place, "basic"]
   regular = df.loc[place, "regular"]
@@ -948,7 +1030,7 @@ async def bucket(interaction:discord.Interaction) :
 ])
 async def sellf(interaction: discord.Interaction, tier:discord.app_commands.Choice[int]) : 
   global fish_price
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   if tier.name != "all" : 
     if df.loc[place, tier.name] == 0 : 
@@ -977,7 +1059,7 @@ async def sellf(interaction: discord.Interaction, tier:discord.app_commands.Choi
     money = amount * cost
     df.loc[place, "purrcoins"] += money
     df.loc[place, tier.name] = 0
-    df.to_csv("userdata/users.csv", index=False)
+    save_users(df)
     await interaction.response.send_message(f"You sold {tier.name} tier fish and received {money} purrcoins!")
   else :
     basic = df.loc[place, "basic"] 
@@ -994,7 +1076,7 @@ async def sellf(interaction: discord.Interaction, tier:discord.app_commands.Choi
     df.loc[place, "premium"] = 0
     df.loc[place, "epic"] = 0
     df.loc[place, "supreme"] = 0
-    df.to_csv("userdata/users.csv", index=False)
+    save_users(df)
     if total == 0 : 
       await interaction.response.send_message("You don't have any fishes in your bucket right now :(\nCatch them using `/fish` command")
     else : 
@@ -1011,7 +1093,7 @@ async def sellf(interaction: discord.Interaction, tier:discord.app_commands.Choi
   app_commands.Choice(name="supreme", value=6)
 ])
 async def finfo(interaction:discord.Interaction, tier:app_commands.Choice[int]) :
-  df = pd.read_csv("userdata/users.csv")
+  df = read_users()
   place = ff.userindex(interaction.user.id)
   quan = df.loc[place, tier.name]
   if tier.name == "basic" : 
@@ -1070,13 +1152,16 @@ async def iteminfo(interaction:discord.Interaction, item:discord.app_commands.Ch
 @client.tree.command(name="fact", description="Wanna know a fact?")
 async def fact(interaction: discord.Interaction):
   api_url = 'https://api.api-ninjas.command/v1/facts?limit=1'
-  response = requests.get(
-    api_url, headers={'X-Api-Key': 'FEnW6LZPfHjmtNGdRtihvA==VRaEObBqXKoHkwIB'})
-  if response.status_code == requests.codes.ok:
-    resultt = (response.json()[0]["fact"])
-  else:
-    resultt = ("Error from the server!")
-  await interaction.response.send_message(resultt, ephemeral=False)
+  await interaction.response.defer()
+  try:
+    response = await run_blocking(requests.get, api_url, headers={'X-Api-Key': 'FEnW6LZPfHjmtNGdRtihvA==VRaEObBqXKoHkwIB'})
+    if response.status_code == requests.codes.ok:
+      resultt = response.json()[0]["fact"]
+    else:
+      resultt = "Error from the server!"
+    await interaction.followup.send(resultt)
+  except Exception:
+    await interaction.followup.send("Error fetching fact. Try again later.")
 
 
 @client.tree.command(name="echo", description="Makes the bot repeat a message that you entered")
@@ -1097,24 +1182,26 @@ async def echo(interaction: discord.Interaction, msg: str):
   app_commands.Choice(name="Dog", value=5)
 ])
 async def pet(interaction: discord.Interaction, pets:discord.app_commands.Choice[int]):
-  with open("data/animals.json") as f:
-    pet_json = json.load(f)
-  if pets.name == "Cat":
-    em = discord.Embed(title=f"{interaction.user.name} orders for a cat 🐱", color=0xe67e22)
-  elif pets.name == "Dog":
-    em = discord.Embed(title=f"{interaction.user.name} gets a dog!", color=0xe74c3c)
-  elif pets.name == "Panda":
-    em = discord.Embed(title=f"{interaction.user.name} is having a panda! So cute >.<", color=interaction.user.color)
-  elif pets.name == "Hamster" : 
-    em = discord.Embed(title=f"{interaction.user.name}, here is your cute hamster. Doesn't it look really cute (≧∀≦)ゞ", color=0x9b59b6)
-  elif pets.name == "Rabbit" : 
-    em = discord.Embed(title=f"Here's a cute bunny for ya, {interaction.user.name}!", color=0x2ecc71)
-    
-  petName = pets.name.lower()
-  print(random.choice(pet_json[petName]))
-  em.set_image(url=random.choice(pet_json[petName]))
-  em.set_footer(text="Hope you are happy now :D")
-  await interaction.response.send_message(embed=em, ephemeral=False)
+  await interaction.response.defer()
+  try:
+    pet_json = await run_blocking(load_json, "data/animals.json")
+    if pets.name == "Cat":
+      em = mk_embed(f"{interaction.user.name} orders for a cat 🐱", color=0xe67e22)
+    elif pets.name == "Dog":
+      em = mk_embed(f"{interaction.user.name} gets a dog!", color=0xe74c3c)
+    elif pets.name == "Panda":
+      em = mk_embed(f"{interaction.user.name} is having a panda! So cute >.<", color=interaction.user.color)
+    elif pets.name == "Hamster" : 
+      em = mk_embed(f"{interaction.user.name}, here is your cute hamster. Doesn't it look really cute (≧∀≦)ゞ", color=0x9b59b6)
+    elif pets.name == "Rabbit" : 
+      em = mk_embed(f"Here's a cute bunny for ya, {interaction.user.name}!", color=0x2ecc71)
+    petName = pets.name.lower()
+    img = random.choice(pet_json[petName])
+    em.set_image(url=img)
+    em.set_footer(text="Hope you are happy now :D")
+    await interaction.followup.send(embed=em)
+  except Exception:
+    await interaction.followup.send("Error fetching pet image. Try again later.")
 
 
 @client.tree.command(name="pick1", description="Randomly chooses an object from the given options")
@@ -1179,10 +1266,15 @@ async def rng(interaction: discord.Interaction, startnum: int, endnum: int):
 @client.tree.command(name="riddle", description="use this command to get a twisty riddle!")
 async def rid(interaction:discord.Interaction) : 
   rid_url = 'https://api.api-ninjas.command/v1/riddles'
-  r = requests.get(rid_url, headers={'X-Api-Key': 'FEnW6LZPfHjmtNGdRtihvA==VRaEObBqXKoHkwIB'})
-  rdq = r.json()[0]["question"]
-  rda = r.json()[0]["answer"]
-  await interaction.response.send_message(rdq, view=RiddAns(str(rda)))
+  await interaction.response.defer()
+  try:
+    r = await run_blocking(requests.get, rid_url, headers={'X-Api-Key': 'FEnW6LZPfHjmtNGdRtihvA==VRaEObBqXKoHkwIB'})
+    j = r.json()
+    rdq = j[0]["question"]
+    rda = j[0]["answer"]
+    await interaction.followup.send(rdq, view=RiddAns(str(rda)))
+  except Exception:
+    await interaction.followup.send("Error fetching riddle. Try again later.")
 
 
 @client.tree.command(name="hiddendm", description="send a message to member dm")
@@ -1546,7 +1638,7 @@ async def logari(interaction:discord.Interaction, num:float) :
 
 @client.tree.command(name="hug", description="Why not hug others to show affection?")
 @discord.app_commands.describe(member="Mention the member you wanna hug")
-async def slap(interaction: discord.Interaction, member: discord.Member):
+async def hug_command(interaction: discord.Interaction, member: discord.Member):
   user_id = int(interaction.user.id)
   person_id = int(member.id)
   result = ff.increase_action_count("userdata/hug_count.json", user_id, person_id)
@@ -1713,6 +1805,4 @@ async def dailylogin_error(interaction:discord.Interaction, error):
 
 # FIX SPAMSTOP COMMAND BECAUSE IT STOPS THE SPAMS IN OTHER SERVERS TOO 
 
-
-
-client.run("ODYzNDkwMTE5OTc2ODc4MDkw.YOnp1w.0edvYFhnfhDXVF4jyBAHUGu46rM")
+client.run(DISCORD_TOKEN)
