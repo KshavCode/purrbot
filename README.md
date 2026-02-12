@@ -1,15 +1,10 @@
 # Discord Bot
-A small Python project containing a bot-like application and data files used at runtime.
+A discord bot assistant created using discord.py!
 
-## Contents
-- **Overview**: what the project is and which files are important
-- **Quick Start**: create a venv, install dependencies, run `main.py`
-- **Project structure**: short description of each top-level file and folders
-- **Data & persistence**: how JSON data and `userdata/` are used
-- **Security**: guidance about `secrets.json`
+
 
 ## Overview
-This repository contains a Python-based bot-style application. The entry point is `main.py`. The project relies on JSON data files stored in `data/` and lightweight persistent user data stored in `userdata/`.
+This repository contains `main.py`. The project relies on JSON data files stored in `data/` and lightweight persistent user data stored in `userdata/`.
 
 ## Quick Start (Windows PowerShell)
 1. Create and activate a virtual environment:
